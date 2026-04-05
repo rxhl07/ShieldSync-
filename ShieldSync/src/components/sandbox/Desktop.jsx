@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence, useAnimation } from 'framer-motion';
 import { Mail, Search, ArrowLeft, ShieldAlert, CheckCircle2, XCircle, X, Trophy, Target, Clock, AlertTriangle, Zap, Flame, Shield } from 'lucide-react';
-import Taskbar from './Taskbar';
+
 import VishingModule from './VishingModule';
 import SocialModule from './SocialModule';
 import WindowWrapper from './WindowWrapper';
@@ -486,6 +486,11 @@ export default function Desktop({ status, onFail, onSuccess, isXRay, category, t
     setTimeout(() => setScreenFlash(null), 500);
   }, [onReportFail, addToast]);
 
+  const handleSafeLink = useCallback(() => {
+    addToast('success', 'Safe Link Verified! No threat found.');
+    addXP();
+  }, [addToast, addXP]);
+
   const handleDismiss = useCallback(() => {
     if (onDismissFeedback) onDismissFeedback();
 
@@ -692,19 +697,28 @@ export default function Desktop({ status, onFail, onSuccess, isXRay, category, t
       ) : simData.payload.type === 'social_dm' ? (
         <WindowWrapper
           title={`${simData.payload.platform} Web Portal`}
-          defaultSize={{ width: 900, height: 700 }}
-          defaultPosition={{ x: 80, y: 60 }}
+          defaultSize={{ width: 'min(1200px, 95vw)', height: 'min(700px, 80vh)' }}
+          defaultPosition={{ x: 'calc(50vw - min(600px, 47.5vw))', y: '10vh' }}
           onClose={() => {}}
           onMinimize={() => {}}
         >
           <div className="w-full h-full relative" style={{ filter: isXRay ? 'contrast(1.1) brightness(0.95)' : 'none' }}>
             {isXRay && <div className="scanline-overlay z-[60] opacity-30" />}
-            <SocialModule payload={simData.payload} onFail={onFail} onSuccess={onSuccess} isXRay={isXRay} trackHover={trackHover} />
+            <SocialModule 
+              payload={simData.payload} 
+              onFail={handleClickTrap} 
+              onReportSuccess={handleReportSuccess} 
+              onReportFail={handleReportFail} 
+              onSafeLink={handleSafeLink}
+              detectedThreats={detectedThreats || []} 
+              isXRay={isXRay} 
+              trackHover={trackHover} 
+            />
           </div>
         </WindowWrapper>
       ) : null}
 
-      {category !== 'phishing' && <Taskbar />}
+
     </div>
   );
 }

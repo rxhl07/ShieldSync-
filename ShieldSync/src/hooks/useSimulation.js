@@ -1,5 +1,6 @@
 import { useState, useCallback, useRef } from 'react';
 import { generateSessionInbox } from '../data/phishingEmails';
+import { SIMULATION_DATABASE } from '../data/schema';
 
 export function useSimulation() {
   const [inSandbox, setInSandbox] = useState(false);
@@ -24,6 +25,8 @@ export function useSimulation() {
       const session = generateSessionInbox(8);
       threatCount = session.totalThreats;
       inbox = session.emails;
+    } else if (category === 'soc-eng') {
+      threatCount = SIMULATION_DATABASE['soc-eng'].payload.conversations.filter(c => c.isThreat).length;
     }
 
     setSessionInbox(inbox);
@@ -106,13 +109,11 @@ export function useSimulation() {
     logMetrics('failed');
     setTimeout(() => {
       setGlitchTriggered(false);
-      setXRayMode(true);
     }, 2000);
   }, [logMetrics]);
 
   const succeedSimulation = useCallback(() => {
     setSimulationStatus('feedback_success');
-    setXRayMode(true);
     logMetrics('success');
   }, [logMetrics]);
 
