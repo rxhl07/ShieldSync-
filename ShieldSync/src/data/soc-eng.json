@@ -1,0 +1,30 @@
+[
+  {
+    "id": "se_001",
+    "platform": "LinkedIn",
+    "senderName": "Sarah Mitchell",
+    "senderTitle": "HR Director @ TechCorp",
+    "isScam": true,
+    "messages": [
+      "Hi! I came across your profile and I'm really impressed with your background.",
+      "We have an exciting position that would be perfect for you. Salary range is $180k-$220k.",
+      "To fast-track your application, could you fill out this quick form? It just needs your basic info and SSN for the background check.",
+      "Here's the link: https://techc0rp-careers.com/apply"
+    ],
+    "hints": ["Unsolicited job offer with unusually high salary", "Asks for SSN before any interview", "Suspicious domain with '0' instead of 'o'"]
+  },
+  {
+    "id": "se_002",
+    "platform": "Instagram",
+    "senderName": "Alex (College Friend)",
+    "senderTitle": "Mutual friend",
+    "isScam": true,
+    "messages": [
+      "Hey!! Long time no talk 😊",
+      "Did you see this video of you? It's going viral lol",
+      "Check it out here 👉 https://insta-viral-vid.com/watch?id=39281",
+      "Let me know what you think!!"
+    ],
+    "hints": ["Vague reference to 'a video of you' — classic bait", "Link goes to suspicious external domain", "Account may be compromised or impersonated"]
+  }
+]

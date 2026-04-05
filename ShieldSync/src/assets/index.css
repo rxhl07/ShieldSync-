@@ -1,0 +1,308 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ===== BASE RESET ===== */
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    cursor: none !important;
+    /* Force custom cursor */
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply font-body bg-[#F8F9FA] text-[#0F172A] dark:bg-[#040914] dark:text-[#F5F5F3] transition-colors duration-500;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* 1. The Cinematic Spotlight Background for Dark Mode */
+  .dark body {
+    background-color: #040914;
+    /* Deep, dark navy base */
+    background-image:
+      /* The focused diagonal light beam */
+      linear-gradient(115deg, transparent 5%, rgba(60, 110, 200, 0.15) 20%, rgba(60, 110, 200, 0.02) 45%, transparent 55%),
+      /* Ambient corner glow */
+      radial-gradient(circle at 0% 0%, rgba(60, 110, 200, 0.2) 0%, transparent 40%);
+    background-attachment: fixed;
+  }
+
+  ::selection {
+    @apply bg-[#2D5BFF] text-white;
+  }
+}
+
+/* ===== ADVANCED GRID + NOISE ===== */
+
+/* 2. Global Grid (Subtle against the spotlight) */
+.cyber-grid-global {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(circle at center, black 20%, transparent 80%);
+  pointer-events: none;
+}
+
+/* Base Light Mode Grid */
+.cyber-grid {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    linear-gradient(to right, rgba(0, 0, 0, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
+  background-size: 50px 50px;
+  mask-image: radial-gradient(circle at center, black, transparent 80%);
+  pointer-events: none;
+  transition: background-image 0.5s ease;
+}
+
+.cyber-noise {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  opacity: 0.04;
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.5' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+
+.dark .cyber-noise {
+  opacity: 0.15;
+}
+
+/* Base glowing orbs */
+.glow-orb-primary {
+  position: fixed;
+  width: 60vw;
+  height: 60vw;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(45, 91, 255, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
+  top: -20vh;
+  left: -20vw;
+  z-index: -2;
+  filter: blur(100px);
+  animation: float-slow 15s ease-in-out infinite alternate;
+}
+
+.glow-orb-secondary {
+  position: fixed;
+  width: 50vw;
+  height: 50vw;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(124, 58, 237, 0.1) 0%, rgba(0, 0, 0, 0) 70%);
+  bottom: -10vh;
+  right: -10vw;
+  z-index: -2;
+  filter: blur(120px);
+  animation: float-slow 20s ease-in-out infinite alternate-reverse;
+}
+
+/* ===== 3. Perspective Floor for the Hero ===== */
+.perspective-floor {
+  position: absolute;
+  bottom: 0;
+  left: -50%;
+  right: -50%;
+  height: 60vh;
+  background-image:
+    linear-gradient(to right, rgba(60, 110, 200, 0.1) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(60, 110, 200, 0.1) 1px, transparent 1px);
+  background-size: 80px 80px;
+  transform: perspective(800px) rotateX(60deg);
+  transform-origin: bottom;
+  mask-image: linear-gradient(to top, black, transparent);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* The bright horizontal reflection line where the light hits the floor */
+.perspective-floor::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 20%, rgba(60, 110, 200, 0.6) 50%, transparent 80%);
+  box-shadow: 0 0 30px 2px rgba(60, 110, 200, 0.4);
+  z-index: 10;
+}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-[#F8F9FA] dark:bg-[#050505];
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-200 dark:bg-[#2A2A30] rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-[#2D5BFF];
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  @apply bg-slate-200 dark:bg-white/10 rounded-full;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  @apply bg-[#2D5BFF];
+}
+
+/* ===== ANIMATIONS & UTILITIES ===== */
+@layer utilities {
+  .glitch-active {
+    animation: screen-jitter 0.4s cubic-bezier(.25, .46, .45, .94) both infinite;
+  }
+
+  .glass-panel {
+    @apply bg-white/70 dark:bg-[#0A0A0B]/60 backdrop-blur-2xl border border-black/5 dark:border-white/5 relative overflow-hidden transition-colors duration-500;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  }
+
+  .dark .glass-panel {
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02), 0 20px 40px rgba(0, 0, 0, 0.4);
+  }
+
+  .glass-panel::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.01) 0%, transparent 100%);
+    pointer-events: none;
+  }
+
+  .dark .glass-panel::before {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, transparent 100%);
+  }
+
+  .text-glow {
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+  }
+}
+
+@keyframes float-slow {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  100% {
+    transform: translate(30px, -30px) scale(1.1);
+  }
+}
+
+@keyframes scanline {
+  0% {
+    transform: translateY(-100%);
+  }
+
+  100% {
+    transform: translateY(100vh);
+  }
+}
+
+.scanline-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: rgba(45, 91, 255, 0.4);
+  box-shadow: 0 0 10px rgba(45, 91, 255, 0.5);
+  z-index: 50;
+  animation: scanline 2s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes screen-jitter {
+
+  0%,
+  100% {
+    transform: translate(0, 0);
+    filter: none;
+  }
+
+  20% {
+    transform: translate(-4px, 4px);
+    filter: hue-rotate(90deg) contrast(1.5);
+  }
+
+  40% {
+    transform: translate(4px, -4px);
+    filter: invert(0.1);
+  }
+
+  60% {
+    transform: translate(-4px, -2px);
+    filter: saturate(2);
+  }
+
+  80% {
+    transform: translate(4px, 2px);
+    filter: brightness(1.2);
+  }
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.5;
+  }
+
+  100% {
+    transform: scale(1.4);
+    opacity: 0;
+  }
+}
+
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes blink-caret {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
+}
+
+.parallax-item {
+  will-change: transform;
+}

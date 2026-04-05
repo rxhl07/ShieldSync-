@@ -1,0 +1,18 @@
+[
+  {
+    "id": "vish_001",
+    "callerDisplay": "Bank of America Fraud Department",
+    "callerNumber": "+1 (800) 555-0193",
+    "isScam": true,
+    "transcript": "Hello, this is the fraud department at Bank of America. We've detected suspicious transactions on your account ending in 4829. A charge of $2,499 was made at an electronics store in Lagos, Nigeria. To block this transaction immediately, I need to verify your identity. Can you please confirm your Social Security number and the PIN for your debit card?",
+    "hints": ["Asks for SSN and PIN — banks never do this", "Creates panic with specific fake details", "Uses urgency to prevent rational thinking"]
+  },
+  {
+    "id": "vish_002",
+    "callerDisplay": "IT Helpdesk",
+    "callerNumber": "ext. 5501",
+    "isScam": true,
+    "transcript": "Hi, this is Mike from IT. We're seeing some unusual network traffic from your workstation. I need to run a quick remote diagnostic. Can you give me your login credentials so I can check your active sessions? This is time-sensitive — we think there might be malware on your machine.",
+    "hints": ["IT never asks for passwords over the phone", "Creates urgency to skip verification", "No reference ticket number provided"]
+  }
+]

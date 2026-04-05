@@ -1,0 +1,38 @@
+[
+  {
+    "id": "email_001",
+    "sender": "security@amaz0n-alerts.com",
+    "senderDisplay": "Amazon Security Team",
+    "subject": "⚠️ Action Required: Unusual sign-in activity detected",
+    "body": "Dear Valued Customer,\n\nWe detected an unauthorized sign-in attempt on your account from an unrecognized device in Moscow, Russia.\n\nIf this wasn't you, please verify your identity immediately.\n\n→ Verify Your Account Now\n\nFailure to verify within 24 hours will result in permanent account suspension.",
+    "isPhish": true,
+    "hints": ["Spoofed domain uses '0' instead of 'o'", "Fear tactic with urgency", "Generic greeting"]
+  },
+  {
+    "id": "email_002",
+    "sender": "no-reply@github.com",
+    "senderDisplay": "GitHub",
+    "subject": "Your monthly billing statement is ready",
+    "body": "Hi CyberSentinel,\n\nYour GitHub billing statement for March 2026 is now available.\n\nYou can view your billing details in your account settings.\n\nThanks,\nThe GitHub Team",
+    "isPhish": false,
+    "hints": []
+  },
+  {
+    "id": "email_003",
+    "sender": "support@paypa1-secure.com",
+    "senderDisplay": "PayPal Support",
+    "subject": "Your account has been limited - Verify Now",
+    "body": "Dear PayPal User,\n\nWe've noticed unusual activity on your account. To continue using PayPal, you must verify your identity within 12 hours.\n\nClick here to restore your account access.\n\nWarning: Failure to verify will result in permanent restrictions.",
+    "isPhish": true,
+    "hints": ["Domain uses '1' instead of 'l'", "Urgency tactic", "Threat of restriction"]
+  },
+  {
+    "id": "email_004",
+    "sender": "newsletter@medium.com",
+    "senderDisplay": "Medium Daily Digest",
+    "subject": "Today's top stories for you",
+    "body": "Good morning!\n\nHere are today's recommended reads based on your interests:\n\n1. The Future of Cybersecurity Training\n2. Understanding Zero-Trust Architecture\n3. How AI is Changing Threat Detection\n\nHappy reading!",
+    "isPhish": false,
+    "hints": []
+  }
+]
