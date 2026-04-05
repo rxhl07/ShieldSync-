@@ -61,6 +61,10 @@ export function useSimulation() {
     logMetrics('success');
   }, [logMetrics]);
 
+  const dismissOverlay = useCallback(() => {
+    setSimulationStatus('active');
+  }, []);
+
   const exitSimulation = useCallback(() => {
     setInSandbox(false);
     setSimulationStatus('idle');
@@ -78,6 +82,7 @@ export function useSimulation() {
     succeedSimulation,
     exitSimulation,
     trackHover,
-    trackSafeItemOpen
+    trackSafeItemOpen,
+    dismissOverlay
   };
 }

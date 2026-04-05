@@ -185,7 +185,7 @@ function SyncMail({ payload, onFail, onSuccess, isXRay, trackHover, trackSafeIte
   );
 }
 
-export default function Desktop({ status, onFail, onSuccess, isXRay, category, trackHover, trackSafeItemOpen }) {
+export default function Desktop({ status, onFail, onSuccess, onExit, onDismiss, isXRay, category, trackHover, trackSafeItemOpen }) {
   const simData = SIMULATION_DATABASE[category || 'phishing'];
   
   return (
@@ -215,10 +215,19 @@ export default function Desktop({ status, onFail, onSuccess, isXRay, category, t
                 SYSTEMS <br/> COMPROMISED
               </h2>
               <div className="h-px w-full bg-gradient-to-r from-transparent via-red-500/30 to-transparent mb-6" />
-              <p className="text-red-400 font-mono text-sm leading-relaxed uppercase tracking-widest">
+              <p className="text-red-400 font-mono text-sm leading-relaxed uppercase tracking-widest mb-10">
                 Payload successfully deployed. <br/> 
                 <span className="opacity-60">Credentials leaked to external enclave.</span>
               </p>
+              
+              <div className="flex gap-4 justify-center">
+                 <button onClick={onDismiss} className="px-6 py-3 bg-red-950/40 text-red-400 border border-red-500/30 hover:bg-red-900/60 font-black uppercase text-xs tracking-widest rounded-xl transition-all">
+                   View Analysis
+                 </button>
+                 <button onClick={onExit} className="px-8 py-3 bg-red-600 hover:bg-white hover:text-red-600 text-white font-black uppercase text-xs tracking-[0.2em] rounded-xl transition-all shadow-[0_0_20px_rgba(239,68,68,0.4)]">
+                   Abort Mission
+                 </button>
+              </div>
             </motion.div>
           </motion.div>
         )}
@@ -242,10 +251,19 @@ export default function Desktop({ status, onFail, onSuccess, isXRay, category, t
                 DIRECTIVE <br/> SECURED
               </h2>
               <div className="h-px w-full bg-gradient-to-r from-transparent via-emerald-500/30 to-transparent mb-6" />
-              <p className="text-white/60 font-mono text-sm uppercase tracking-widest leading-relaxed">
+              <p className="text-white/60 font-mono text-sm uppercase tracking-widest leading-relaxed mb-10">
                 Threat neutralized effectively. <br/> 
                 <span className="text-emerald-400">X-Ray analysis mode now active.</span>
               </p>
+
+              <div className="flex gap-4 justify-center">
+                 <button onClick={onDismiss} className="px-6 py-3 bg-emerald-950/40 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-900/60 font-black uppercase text-xs tracking-widest rounded-xl transition-all">
+                   Explore X-Ray
+                 </button>
+                 <button onClick={onExit} className="px-8 py-3 bg-emerald-500 hover:bg-white hover:text-emerald-600 text-white font-black uppercase text-xs tracking-[0.2em] rounded-xl transition-all shadow-[0_0_20px_rgba(16,185,129,0.4)]">
+                   Return to Base
+                 </button>
+              </div>
             </motion.div>
           </motion.div>
         )}
@@ -268,7 +286,7 @@ export default function Desktop({ status, onFail, onSuccess, isXRay, category, t
       )}
 
       {simData.payload.type === 'audio_call' && (
-        <VishingModule payload={simData.payload} onFail={onFail} onSuccess={onSuccess} isXRay={isXRay} />
+        <VishingModule payload={simData.payload} onFail={onFail} onSuccess={onSuccess} onExit={onExit} isXRay={isXRay} />
       )}
 
       {simData.payload.type === 'social_dm' && (
@@ -286,7 +304,7 @@ export default function Desktop({ status, onFail, onSuccess, isXRay, category, t
         </WindowWrapper>
       )}
 
-      <Taskbar />
+      {simData.payload.type !== 'audio_call' && <Taskbar />}
     </div>
   );
 }

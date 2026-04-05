@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Mail, Phone, MessageSquare, Terminal, Eye, Shield, Play, ArrowLeft } from 'lucide-react';
 import { useSimulation } from '../hooks/useSimulation';
 import Desktop from '../components/sandbox/Desktop';
+import VishingAnimation from '../components/common/VishingAnimation';
 import { useTheme } from '../contexts/ThemeContext';
 import { SIMULATION_DATABASE } from '../data/schema';
 
@@ -14,6 +15,7 @@ const THREAT_CATEGORIES = [
 
 export default function Arena() {
   const [activeCategory, setActiveCategory] = useState('phishing');
+  const [showOperationInfo, setShowOperationInfo] = useState(false);
   const [hackerPOV, setHackerPOV] = useState(false);
   const { theme } = useTheme();
   const isDark = theme === 'dark';
@@ -28,7 +30,8 @@ export default function Arena() {
     succeedSimulation,
     exitSimulation,
     trackHover,
-    trackSafeItemOpen
+    trackSafeItemOpen,
+    dismissOverlay
   } = useSimulation();
 
   // If we are actively in the sandbox simulation
@@ -65,6 +68,8 @@ export default function Arena() {
              status={simulationStatus} 
              onFail={failSimulation} 
              onSuccess={succeedSimulation}
+             onExit={exitSimulation}
+             onDismiss={dismissOverlay}
              isXRay={xRayMode}
              category={activeCategory}
              trackHover={trackHover}
@@ -135,7 +140,10 @@ export default function Arena() {
               return (
                 <button
                   key={cat.id}
-                  onClick={() => setActiveCategory(cat.id)}
+                  onClick={() => {
+                    setActiveCategory(cat.id);
+                    setShowOperationInfo(false);
+                  }}
                   className={`w-full flex items-center justify-between p-4 rounded-2xl transition-all group border ${
                     isActive 
                       ? 'bg-accent/10 border-accent/30 text-accent ring-2 ring-accent/10 shadow-sm' 
@@ -208,8 +216,60 @@ export default function Arena() {
                     </div>
                   </div>
                 </div>
+              ) : (SIMULATION_DATABASE[activeCategory]?.concept && !showOperationInfo) ? (
+                // Defender Concept View
+                <div className="p-12 flex-1 flex flex-col relative justify-center">
+                  <div className="max-w-2xl relative z-10 mx-auto text-center md:text-left">
+                    <h2 className="text-4xl md:text-6xl font-black text-slate-950 dark:text-white mb-8 tracking-[-0.03em] leading-tight transition-colors" style={{ fontFamily: 'var(--font-heading)' }}>
+                      {SIMULATION_DATABASE[activeCategory].concept.title}
+                    </h2>
+                    <p className="text-base md:text-lg text-slate-600 dark:text-white/50 leading-relaxed max-w-xl mb-12 font-medium transition-colors">
+                      {SIMULATION_DATABASE[activeCategory].concept.description}
+                    </p>
+                    
+                    {SIMULATION_DATABASE[activeCategory].concept.videoUrl && (
+                      SIMULATION_DATABASE[activeCategory].concept.videoUrl === 'component:VishingAnimation' ? (
+                        <div className="w-full max-w-lg mb-12 shadow-[0_0_60px_rgba(255,0,60,0.1)] opacity-95 relative rounded-3xl overflow-hidden" style={{ aspectRatio: '16/9' }}>
+                           <VishingAnimation />
+                        </div>
+                      ) : String(SIMULATION_DATABASE[activeCategory].concept.videoUrl).includes('youtube') ? (
+                        <div className="w-full max-w-lg rounded-2xl border border-black/10 dark:border-white/10 mb-12 shadow-xl overflow-hidden opacity-80 relative" style={{ paddingTop: '56.25%' }}>
+                          <iframe 
+                             src={SIMULATION_DATABASE[activeCategory].concept.videoUrl} 
+                             className="absolute top-0 left-0 w-full h-full"
+                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                             allowFullScreen
+                          />
+                        </div>
+                      ) : String(SIMULATION_DATABASE[activeCategory].concept.videoUrl).endsWith('.mp4') ? (
+                        <video src={SIMULATION_DATABASE[activeCategory].concept.videoUrl} autoPlay loop muted playsInline className="w-full max-w-lg rounded-2xl border border-black/10 dark:border-white/10 mb-12 shadow-xl opacity-80 object-cover" style={{ aspectRatio: '16/9' }} />
+                      ) : (
+                        <div className="w-full max-w-lg rounded-2xl border border-black/10 dark:border-white/10 mb-12 shadow-xl overflow-hidden opacity-80 relative" style={{ aspectRatio: '16/9' }}>
+                          <motion.img 
+                            src={SIMULATION_DATABASE[activeCategory].concept.videoUrl} 
+                            animate={{ scale: [1, 1.1, 1], rotate: [0, 1, 0] }} 
+                            transition={{ duration: 15, repeat: Infinity, ease: 'linear' }} 
+                            className="absolute top-0 left-0 w-full h-full object-cover"
+                          />
+                        </div>
+                      )
+                    )}
+                    
+                    <button 
+                      onClick={() => setShowOperationInfo(true)}
+                      className="group relative inline-flex items-center justify-center gap-4 px-12 py-6 bg-slate-950 dark:bg-accent text-white text-sm font-black uppercase tracking-[0.2em] rounded-2xl overflow-hidden shadow-lg hover:shadow-[0_20px_40px_rgba(45,91,255,0.4)] transition-all hover:-translate-y-1 active:translate-y-0"
+                    >
+                      <div className="absolute inset-0 bg-accent dark:bg-white transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700 origin-left" />
+                      <span className="relative z-10 transition-colors group-hover:text-white dark:group-hover:text-black">Simulation</span>
+                    </button>
+                  </div>
+                  {/* UI Decor */}
+                  <div className="absolute right-0 bottom-0 opacity-[0.03] dark:opacity-[0.05] pointer-events-none -mr-20 -mb-20">
+                    <Shield size={600} />
+                  </div>
+                </div>
               ) : (
-                // Defender View
+                // Defender Operation View
                 <div className="p-12 flex-1 flex flex-col relative justify-center">
                   <div className="max-w-2xl relative z-10 mx-auto text-center md:text-left">
                     <motion.div
@@ -255,8 +315,8 @@ export default function Arena() {
                       className="group relative inline-flex items-center gap-4 px-12 py-6 bg-slate-950 dark:bg-white text-white dark:text-black text-sm font-black uppercase tracking-[0.2em] rounded-2xl overflow-hidden hover:shadow-[0_20px_40px_rgba(45,91,255,0.2)] dark:hover:shadow-[0_20px_40px_rgba(255,255,255,0.1)] transition-all hover:-translate-y-1 active:translate-y-0"
                     >
                       <div className="absolute inset-0 bg-accent transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700 origin-left" />
-                      <Play size={18} className="relative z-10 transition-colors" />
-                      <span className="relative z-10 transition-colors">Enter Sandbox</span>
+                      <Play size={18} className="relative z-10 transition-colors group-hover:text-white dark:group-hover:text-black" />
+                      <span className="relative z-10 transition-colors group-hover:text-white dark:group-hover:text-black">Enter Sandbox</span>
                     </button>
                   </div>
  

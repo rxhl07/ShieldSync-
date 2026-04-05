@@ -54,6 +54,11 @@ export const SIMULATION_DATABASE = {
   "vishing": {
     id: "vishing_01",
     category: "vishing",
+    concept: {
+      title: "VISHING",
+      description: "Vishing (Voice Phishing) is a form of cyberattack where threat actors use phone calls or voice messages—increasingly utilizing AI voice cloning—to trick targets into revealing sensitive data like 2FA tokens, passwords, or financial details.",
+      videoUrl: "component:VishingAnimation"
+    },
     title: "OPERATION: VOICE CLONE",
     briefing: "An incoming call from 'Bank Support' requesting your 2FA token. This simulation models AI-generated voice cloning (Deepfake) combined with Caller ID spoofing.",
     flags: [
@@ -64,17 +69,55 @@ export const SIMULATION_DATABASE = {
     ],
     payload: {
       type: "audio_call",
-      callerName: "Bank Fraud Dept",
-      callerNumber: "+1 (800) 555-0199",
-      audioSequence: [
-        "Hello! This is Chase Fraud Support. We've detected a $400 charge in Ohio.",
-        "To freeze this transaction, I just sent a 6-digit cancellation code to your phone.",
-        "Can you read that code back to me for verification?"
-      ],
-      isThreat: true,
-      redFlags: [
-        { text: 'read that code back to me', hint: 'Banks will never call you and ask for a 2FA or SMS code. Codes are for YOU to enter online only.' },
-        { text: 'Chase Fraud Support', hint: 'Caller ID is easily spoofed. Always hang up and call the number on the back of your card.' }
+      calls: [
+        {
+          id: 1,
+          callerName: "Bank Fraud Dept",
+          callerNumber: "+1 (800) 555-0199",
+          isThreat: true,
+          audioSequence: [
+            "Hello! This is Chase Fraud Support. We've detected a $400 charge in Ohio.",
+            "To freeze this transaction, I just sent a 6-digit cancellation code to your phone.",
+            "Can you read that code back to me for verification?"
+          ],
+          redFlags: [
+            { text: 'read that code back to me', hint: 'Banks will never call you and ask for a 2FA or SMS code. Codes are for YOU to enter online only.' },
+            { text: 'Chase Fraud Support', hint: 'Caller ID is easily spoofed. Always hang up and call the number on the back of your card.' }
+          ],
+          actionSafe: "Hang Up",
+          actionThreat: "Provide Code"
+        },
+        {
+          id: 2,
+          callerName: "IT Operations",
+          callerNumber: "Internal Ext. 4022",
+          isThreat: false,
+          audioSequence: [
+            "Hey, this is Mark from internal IT.",
+            "We're doing a mandatory database migration today and services might be slow.",
+            "You don't need to do anything or give me any info, just please wait before submitting large queries. Thanks!"
+          ],
+          redFlags: [],
+          actionSafe: "Acknowledge & Hang Up",
+          actionThreat: "Offer Credentials"
+        },
+        {
+          id: 3,
+          callerName: "Payroll Dept",
+          callerNumber: "+1 (888) 220-4100",
+          isThreat: true,
+          audioSequence: [
+            "Hi, this is David from corporate payroll.",
+            "There is a matching discrepancy on your W-2 tax forms for this quarter.",
+            "To avoid a delay on this week's paycheck, please confirm your Social Security Number now."
+          ],
+          redFlags: [
+            { text: 'confirm your Social Security Number', hint: 'Payroll already has your SSN and will never ask to urgently confirm it over the phone.' },
+            { text: 'delay on this week\'s paycheck', hint: 'Artificial urgency targeting your financial security.' }
+          ],
+          actionSafe: "Hang Up",
+          actionThreat: "Provide SSN"
+        }
       ]
     }
   },
