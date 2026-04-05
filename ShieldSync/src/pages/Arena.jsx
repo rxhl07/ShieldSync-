@@ -4,6 +4,7 @@ import { Mail, Phone, MessageSquare, Terminal, Eye, Shield, Play, ArrowLeft } fr
 import { useSimulation } from '../hooks/useSimulation';
 import Desktop from '../components/sandbox/Desktop';
 import { useTheme } from '../contexts/ThemeContext';
+import { SIMULATION_DATABASE } from '../data/schema';
 
 const THREAT_CATEGORIES = [
   { id: 'phishing', title: 'Phishing', icon: Mail, count: 24 },
@@ -25,7 +26,9 @@ export default function Arena() {
     startSimulation,
     failSimulation,
     succeedSimulation,
-    exitSimulation
+    exitSimulation,
+    trackHover,
+    trackSafeItemOpen
   } = useSimulation();
 
   // If we are actively in the sandbox simulation
@@ -63,6 +66,9 @@ export default function Arena() {
              onFail={failSimulation} 
              onSuccess={succeedSimulation}
              isXRay={xRayMode}
+             category={activeCategory}
+             trackHover={trackHover}
+             trackSafeItemOpen={trackSafeItemOpen}
            />
         </div>
       </div>
@@ -217,20 +223,20 @@ export default function Arena() {
                     </motion.div>
                     
                     <h2 className="text-4xl md:text-6xl font-black text-slate-950 dark:text-white mb-8 tracking-[-0.03em] leading-tight transition-colors" style={{ fontFamily: 'var(--font-heading)' }}>
-                      OPERATION: <br className="hidden md:block" /> PHANTOM AUTH
+                      {SIMULATION_DATABASE[activeCategory]?.title?.split(': ').map((part, i) => (
+                        <span key={i}>
+                          {part}
+                          {i === 0 && <><br className="hidden md:block" /></>}
+                        </span>
+                      ))}
                     </h2>
                     
                     <p className="text-base md:text-lg text-slate-600 dark:text-white/50 leading-relaxed max-w-xl mb-12 font-medium transition-colors">
-                      This module simulates a highly sophisticated credential harvesting attack disguised as an urgent IT protocol. You will face dynamic sender spoofing and psychological urgency triggers.
+                      {SIMULATION_DATABASE[activeCategory]?.briefing}
                     </p>
  
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-16">
-                       {[
-                         { text: 'Sender domain spoofing checks', color: 'red-500' },
-                         { text: 'Urgency psychological analysis', color: 'amber-500' },
-                         { text: 'Hidden link inspection manual', color: 'accent' },
-                         { text: 'Credential harvest mitigation', color: 'green-500' }
-                       ].map((flag, i) => (
+                       {SIMULATION_DATABASE[activeCategory]?.flags.map((flag, i) => (
                          <motion.div 
                            key={i} 
                            initial={{ opacity: 0, y: 10 }}

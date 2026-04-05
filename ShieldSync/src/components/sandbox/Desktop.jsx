@@ -3,17 +3,14 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Mail, Search, AlertTriangle, ArrowLeft, MoreVertical, Paperclip, CheckCircle2, ShieldAlert, XCircle } from 'lucide-react';
 import WindowWrapper from './WindowWrapper';
 import Taskbar from './Taskbar';
-import { MINI_GAME_EMAIL } from '../../utils/constants';
+import VishingModule from './VishingModule';
+import SocialModule from './SocialModule';
+import { SIMULATION_DATABASE } from '../../data/schema';
 
-function SyncMail({ onFail, onSuccess, isXRay }) {
+function SyncMail({ payload, onFail, onSuccess, isXRay, trackHover, trackSafeItemOpen }) {
   const [selectedEmail, setSelectedEmail] = useState(null);
 
-  const inbox = [
-    { id: 1, sender: "Netflix Protocol", subject: "Immediate action: Payment authentication required", read: false },
-    { id: 2, sender: MINI_GAME_EMAIL.senderDisplay, subject: MINI_GAME_EMAIL.subject, read: false, isPhish: true },
-    { id: 3, sender: "LinkNet Security", subject: "New login detected from 192.168.1.104", read: true },
-    { id: 4, sender: "Alice [Admin]", subject: "Final project assets for v2 launch", read: true },
-  ];
+  const inbox = payload.inbox;
 
   return (
     <div className="flex h-full bg-white dark:bg-[#050505] text-slate-800 dark:text-white/80 transition-colors duration-500 font-sans">
@@ -56,7 +53,12 @@ function SyncMail({ onFail, onSuccess, isXRay }) {
                 key={email.id}
                 initial={{ opacity: 0, y: 5 }}
                 animate={{ opacity: 1, y: 0 }}
-                onClick={() => setSelectedEmail(email)}
+                onClick={() => {
+                  setSelectedEmail(email);
+                  if (!email.isThreat && !email.read && trackSafeItemOpen) {
+                    trackSafeItemOpen();
+                  }
+                }}
                 className={`flex items-center px-6 py-4 rounded-2xl cursor-pointer transition-all border ${
                   !email.read 
                     ? 'bg-white dark:bg-white/5 border-slate-100 dark:border-white/5 shadow-sm' 
@@ -86,9 +88,9 @@ function SyncMail({ onFail, onSuccess, isXRay }) {
               
               <div className="flex gap-3">
                 <button 
-                  onClick={() => selectedEmail.isPhish ? onSuccess() : onFail()} 
+                  onClick={() => selectedEmail.isThreat ? onSuccess() : onFail()} 
                   className={`flex items-center gap-2 px-6 py-2.5 text-[10px] font-black uppercase tracking-widest rounded-xl border transition-all ${
-                    isXRay && selectedEmail.isPhish 
+                    isXRay && selectedEmail.isThreat 
                       ? 'bg-red-500 text-white border-red-500 shadow-[0_10px_20px_rgba(239,68,68,0.3)]' 
                       : 'border-slate-200 dark:border-white/10 text-slate-900 dark:text-white hover:bg-slate-50 dark:hover:bg-white/5'
                   }`}
@@ -103,15 +105,15 @@ function SyncMail({ onFail, onSuccess, isXRay }) {
               
               <div className="flex items-center justify-between mb-10 pb-8 border-b border-slate-100 dark:border-white/5">
                 <div className="flex items-center gap-4">
-                  <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-white font-black text-xl shadow-lg shadow-accent/20 ${selectedEmail.isPhish ? 'bg-amber-600' : 'bg-accent'}`}>
+                  <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-white font-black text-xl shadow-lg shadow-accent/20 ${selectedEmail.isThreat ? 'bg-amber-600' : 'bg-accent'}`}>
                     {selectedEmail.sender[0]}
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
                       <span className="font-black text-slate-900 dark:text-white text-sm">{selectedEmail.sender}</span>
-                      <span className={`text-[11px] font-bold px-1.5 py-0.5 rounded ${isXRay && selectedEmail.isPhish ? 'bg-red-500/10 text-red-500 border border-red-500/30 relative group cursor-help' : 'text-slate-400 dark:text-white/30'}`}>
-                        &lt;{selectedEmail.isPhish ? MINI_GAME_EMAIL.sender : 'internal@linknet.com'}&gt;
-                        {isXRay && selectedEmail.isPhish && (
+                      <span className={`text-[11px] font-bold px-1.5 py-0.5 rounded ${isXRay && selectedEmail.isThreat ? 'bg-red-500/10 text-red-500 border border-red-500/30 relative group cursor-help' : 'text-slate-400 dark:text-white/30'}`}>
+                        &lt;{selectedEmail.isThreat ? selectedEmail.spoofedEmail : 'internal@linknet.com'}&gt;
+                        {isXRay && selectedEmail.isThreat && (
                           <div className="absolute bottom-full left-0 mb-3 w-64 bg-red-600 text-white p-4 text-[10px] rounded-xl opacity-0 group-hover:opacity-100 pointer-events-none z-50 shadow-2xl leading-relaxed">
                             <span className="font-black uppercase block mb-1">Vector Detected</span>
                             🚩 Unverified external domain spoofing LinkNet protocols.
@@ -125,17 +127,18 @@ function SyncMail({ onFail, onSuccess, isXRay }) {
                 <div className="text-[10px] font-black text-slate-300">OCT 14, 2026 (2h ago)</div>
               </div>
 
-              {selectedEmail.isPhish ? (
+              {selectedEmail.isThreat ? (
                 <div className="text-base text-slate-700 dark:text-white/80 font-medium space-y-6 max-w-2xl leading-relaxed transition-colors">
-                  {MINI_GAME_EMAIL.body.split('\n').map((line, i) => {
+                  {selectedEmail.body.map((line, i) => {
                     const isTrapLink = line.includes('Verify Your Account');
-                    const flag = isXRay ? MINI_GAME_EMAIL.redFlags.find(f => line.includes(f.text)) : null;
+                    const flag = isXRay ? selectedEmail.redFlags.find(f => line.includes(f.text)) : null;
 
                     if (isTrapLink) {
                       return (
                          <div key={i} className="my-10">
                             <button 
-                              onClick={() => selectedEmail.isPhish ? onFail() : onSuccess()}
+                              onMouseEnter={trackHover}
+                              onClick={() => selectedEmail.isThreat ? onFail() : onSuccess()}
                               className={`px-10 py-5 bg-accent text-white font-black uppercase tracking-[0.2em] rounded-2xl text-xs hover:shadow-[0_20px_40px_rgba(45,91,255,0.3)] transition-all relative group ${
                                 isXRay ? 'ring-4 ring-red-500 ring-offset-4 dark:ring-offset-[#050505]' : ''
                               }`}
@@ -182,7 +185,9 @@ function SyncMail({ onFail, onSuccess, isXRay }) {
   );
 }
 
-export default function Desktop({ status, onFail, onSuccess, isXRay }) {
+export default function Desktop({ status, onFail, onSuccess, isXRay, category, trackHover, trackSafeItemOpen }) {
+  const simData = SIMULATION_DATABASE[category || 'phishing'];
+  
   return (
     <div className="absolute inset-0 bg-[#050505] overflow-hidden">
       {/* OS Wallpaper with depth */}
@@ -211,7 +216,7 @@ export default function Desktop({ status, onFail, onSuccess, isXRay }) {
               </h2>
               <div className="h-px w-full bg-gradient-to-r from-transparent via-red-500/30 to-transparent mb-6" />
               <p className="text-red-400 font-mono text-sm leading-relaxed uppercase tracking-widest">
-                Phishing payload successfully deployed. <br/> 
+                Payload successfully deployed. <br/> 
                 <span className="opacity-60">Credentials leaked to external enclave.</span>
               </p>
             </motion.div>
@@ -247,18 +252,39 @@ export default function Desktop({ status, onFail, onSuccess, isXRay }) {
       </AnimatePresence>
 
       {/* Main Sandbox Windows */}
-      <WindowWrapper
-        title="SyncMail Enterprise Enclave"
-        defaultSize={{ width: 1000, height: 750 }}
-        defaultPosition={{ x: 50, y: 50 }}
-        onClose={() => {}}
-        onMinimize={() => {}}
-      >
-         <div className="w-full h-full relative" style={{ filter: isXRay ? 'contrast(1.1) brightness(0.95)' : 'none' }}>
-           {isXRay && <div className="scanline-overlay z-[60] opacity-30" />}
-           <SyncMail onFail={onFail} onSuccess={onSuccess} isXRay={isXRay} />
-         </div>
-      </WindowWrapper>
+      {simData.payload.type === 'email' && (
+        <WindowWrapper
+          title="SyncMail Enterprise Enclave"
+          defaultSize={{ width: 1000, height: 750 }}
+          defaultPosition={{ x: 50, y: 50 }}
+          onClose={() => {}}
+          onMinimize={() => {}}
+        >
+           <div className="w-full h-full relative" style={{ filter: isXRay ? 'contrast(1.1) brightness(0.95)' : 'none' }}>
+             {isXRay && <div className="scanline-overlay z-[60] opacity-30" />}
+             <SyncMail payload={simData.payload} onFail={onFail} onSuccess={onSuccess} isXRay={isXRay} trackHover={trackHover} trackSafeItemOpen={trackSafeItemOpen} />
+           </div>
+        </WindowWrapper>
+      )}
+
+      {simData.payload.type === 'audio_call' && (
+        <VishingModule payload={simData.payload} onFail={onFail} onSuccess={onSuccess} isXRay={isXRay} />
+      )}
+
+      {simData.payload.type === 'social_dm' && (
+        <WindowWrapper
+          title={`${simData.payload.platform} Web Portal`}
+          defaultSize={{ width: 900, height: 700 }}
+          defaultPosition={{ x: 80, y: 60 }}
+          onClose={() => {}}
+          onMinimize={() => {}}
+        >
+          <div className="w-full h-full relative" style={{ filter: isXRay ? 'contrast(1.1) brightness(0.95)' : 'none' }}>
+            {isXRay && <div className="scanline-overlay z-[60] opacity-30" />}
+            <SocialModule payload={simData.payload} onFail={onFail} onSuccess={onSuccess} isXRay={isXRay} trackHover={trackHover} />
+          </div>
+        </WindowWrapper>
+      )}
 
       <Taskbar />
     </div>
