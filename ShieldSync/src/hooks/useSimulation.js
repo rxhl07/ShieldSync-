@@ -142,6 +142,17 @@ export function useSimulation() {
     exitSimulation,
     trackHover,
     trackSafeItemOpen,
-    dismissOverlay
+    dismissOverlay,
+    // Game loop
+    detectedThreats,
+    totalThreats,
+    wrongClicks,
+    sessionInbox,
+    reportThreatSuccess,
+    reportThreatFail,
+    dismissFeedback,
+    checkCompletion,
+    metrics,
+    setSimulationStatus,
   };
 }

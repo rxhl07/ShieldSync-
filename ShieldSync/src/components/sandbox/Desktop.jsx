@@ -22,10 +22,11 @@ function Toast({ type, message, onDone }) {
       animate={{ y: 0, opacity: 1, scale: 1 }}
       exit={{ y: -40, opacity: 0, scale: 0.95 }}
       transition={{ type: 'spring', damping: 20, stiffness: 300 }}
-      className={`fixed top-20 left-1/2 -translate-x-1/2 z-[300] flex items-center gap-3 px-6 py-3 rounded-xl border backdrop-blur-xl shadow-2xl ${type === 'success'
+      className={`fixed top-20 left-1/2 -translate-x-1/2 z-[300] flex items-center gap-3 px-6 py-3 rounded-xl border backdrop-blur-xl shadow-2xl ${
+        type === 'success'
           ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
           : 'bg-red-500/10 border-red-500/30 text-red-400'
-        }`}
+      }`}
     >
       {type === 'success' ? <CheckCircle2 size={16} /> : <XCircle size={16} />}
       <span className="text-xs font-black uppercase tracking-[0.1em]">{message}</span>
@@ -76,7 +77,7 @@ function FloatingXP({ x, y }) {
 function FullScreenSyncMail({ onReportSuccess, onReportFail, onClickTrap, detectedThreats, isXRay, trackHover, trackSafeItemOpen, sessionInbox, streak }) {
   const [selectedEmail, setSelectedEmail] = useState(null);
   const [shakeEmail, setShakeEmail] = useState(false);
-  const inbox = sessionInbox;
+  const inbox = sessionInbox || [];
 
   const isDetected = (emailId) => detectedThreats.includes(emailId);
 
@@ -146,10 +147,11 @@ function FullScreenSyncMail({ onReportSuccess, onReportFail, onClickTrap, detect
                       if (!email.isThreat && trackSafeItemOpen) trackSafeItemOpen();
                     }
                   }}
-                  className={`flex items-center px-8 py-4 border-b border-white/[0.03] cursor-pointer transition-colors ${detected
+                  className={`flex items-center px-8 py-4 border-b border-white/[0.03] cursor-pointer transition-colors ${
+                    detected
                       ? 'opacity-30 pointer-events-none'
                       : ''
-                    }`}
+                  }`}
                 >
                   <div className="w-8 flex justify-center shrink-0">
                     {detected ? (
@@ -301,15 +303,139 @@ function FullScreenSyncMail({ onReportSuccess, onReportFail, onClickTrap, detect
   );
 }
 
-export default function Desktop({ status, onFail, onSuccess, onExit, onDismiss, isXRay, category, trackHover, trackSafeItemOpen }) {
+// ===================================================================
+// SCORING SCREEN
+// ===================================================================
+function ScoringScreen({ detectedThreats, totalThreats, wrongClicks, metrics, onExit }) {
+  const timeElapsed = metrics.startTime ? ((Date.now() - metrics.startTime) / 1000).toFixed(0) : 0;
+  const minutes = Math.floor(timeElapsed / 60);
+  const seconds = timeElapsed % 60;
+
+  const baseScore = detectedThreats.length * 250;
+  const penalty = wrongClicks * 100;
+  const timeBonus = timeElapsed < 120 ? 200 : timeElapsed < 300 ? 100 : 0;
+  const finalScore = Math.max(0, baseScore - penalty + timeBonus);
+
+  const accuracy = totalThreats > 0
+    ? Math.round((detectedThreats.length / (detectedThreats.length + wrongClicks)) * 100)
+    : 0;
+
+  const grade = accuracy >= 90 ? 'S' : accuracy >= 75 ? 'A' : accuracy >= 60 ? 'B' : accuracy >= 40 ? 'C' : 'D';
+  const gradeColor = accuracy >= 90 ? 'text-emerald-400' : accuracy >= 75 ? 'text-blue-400' : accuracy >= 60 ? 'text-amber-400' : 'text-red-400';
+  const gradeGlow = accuracy >= 90 ? 'drop-shadow-[0_0_30px_rgba(34,197,94,0.4)]' : accuracy >= 75 ? 'drop-shadow-[0_0_30px_rgba(96,165,250,0.4)]' : '';
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.6 }}
+      className="absolute inset-0 z-[200] flex items-center justify-center bg-[#030308]/95 backdrop-blur-2xl"
+    >
+      <motion.div
+        initial={{ scale: 0.9, y: 30 }}
+        animate={{ scale: 1, y: 0 }}
+        transition={{ delay: 0.2, type: 'spring', damping: 25 }}
+        className="w-full max-w-lg p-10"
+      >
+        <div className="text-center mb-10">
+          <motion.div
+            initial={{ scale: 0, rotate: -20 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{ delay: 0.4, type: 'spring', damping: 12 }}
+            className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center"
+          >
+            <Trophy size={36} className="text-emerald-400" />
+          </motion.div>
+          <h2 className="text-3xl font-black text-white mb-2 tracking-tight" style={{ fontFamily: 'var(--font-heading)' }}>
+            MISSION COMPLETE
+          </h2>
+          <p className="text-sm text-white/30 font-medium">All threats have been successfully neutralized</p>
+        </div>
+
+        {/* Grade */}
+        <motion.div
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ delay: 0.6, type: 'spring', damping: 10 }}
+          className="text-center mb-10"
+        >
+          <div className={`text-7xl font-black ${gradeColor} ${gradeGlow} tracking-tighter`} style={{ fontFamily: 'var(--font-heading)' }}>
+            {grade}
+          </div>
+          <div className="text-xs text-white/20 font-bold uppercase tracking-[0.2em] mt-2">Performance Grade</div>
+        </motion.div>
+
+        <div className="grid grid-cols-2 gap-3 mb-10">
+          {[
+            { icon: Target, color: 'text-emerald-400', label: 'Threats Found', value: `${detectedThreats.length}`, sub: `/${totalThreats}` },
+            { icon: Zap, color: 'text-amber-400', label: 'Accuracy', value: `${accuracy}`, sub: '%' },
+            { icon: Clock, color: 'text-blue-400', label: 'Time', value: `${minutes}m ${String(seconds).padStart(2, '0')}`, sub: 's' },
+            { icon: AlertTriangle, color: 'text-red-400', label: 'Mistakes', value: `${wrongClicks}`, sub: '' },
+          ].map((stat, i) => (
+            <motion.div
+              key={stat.label}
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.8 + i * 0.1 }}
+              className="bg-white/[0.03] rounded-xl p-4 border border-white/[0.05]"
+            >
+              <div className="flex items-center gap-2 mb-2">
+                <stat.icon size={14} className={stat.color} />
+                <span className="text-[10px] font-bold text-white/30 uppercase tracking-widest">{stat.label}</span>
+              </div>
+              <span className="text-2xl font-black text-white">{stat.value}<span className="text-white/20 text-lg">{stat.sub}</span></span>
+            </motion.div>
+          ))}
+        </div>
+
+        <div className="mb-10">
+          <div className="flex justify-between text-[10px] font-bold text-white/20 uppercase tracking-widest mb-2">
+            <span>Total Score</span>
+            <motion.span
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1.2 }}
+              className="text-white/60"
+            >
+              {finalScore} pts
+            </motion.span>
+          </div>
+          <div className="w-full h-2.5 bg-white/[0.05] rounded-full overflow-hidden">
+            <motion.div
+              initial={{ width: 0 }}
+              animate={{ width: `${Math.min(100, (finalScore / 1200) * 100)}%` }}
+              transition={{ delay: 1, duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
+              className="h-full bg-gradient-to-r from-accent via-emerald-400 to-amber-400 rounded-full shadow-[0_0_12px_rgba(45,91,255,0.4)]"
+            />
+          </div>
+        </div>
+
+        <motion.button
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.4 }}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          onClick={onExit}
+          className="w-full py-4 bg-white text-black font-black text-sm uppercase tracking-[0.15em] rounded-xl hover:bg-white/90 transition-all"
+        >
+          Return to Briefing
+        </motion.button>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+
+// ===================================================================
+// DESKTOP COMPONENT — Main sandbox orchestrator
+// ===================================================================
+export default function Desktop({ status, onFail, onSuccess, isXRay, category, trackHover, trackSafeItemOpen, detectedThreats, totalThreats, wrongClicks, onReportSuccess, onReportFail, onDismissFeedback, onCheckCompletion, metrics, onExit, setSimulationStatus, sessionInbox: sessionInboxProp }) {
   const simData = SIMULATION_DATABASE[category || 'phishing'];
   const [toasts, setToasts] = useState([]);
   const [xpFloats, setXpFloats] = useState([]);
   const [streak, setStreak] = useState(0);
   const [screenFlash, setScreenFlash] = useState(null); // 'success' | 'fail' | null
-
-  // Track streak
-  const prevDetectedRef = useState(0);
 
   const addToast = useCallback((type, message) => {
     const id = Date.now();
@@ -322,7 +448,6 @@ export default function Desktop({ status, onFail, onSuccess, onExit, onDismiss, 
 
   const addXP = useCallback(() => {
     const id = Date.now();
-    // Randomize position slightly around center-top
     const x = window.innerWidth / 2 - 40 + Math.random() * 80;
     const y = window.innerHeight / 2 - 100;
     setXpFloats(prev => [...prev, { id, x, y }]);
@@ -467,23 +592,15 @@ export default function Desktop({ status, onFail, onSuccess, onExit, onDismiss, 
                   />
                 </div>
               </div>
-              <h2 className="text-5xl font-black text-red-500 mb-6 tracking-tighter leading-tight" style={{ fontFamily: 'var(--font-heading)' }}>
-                SYSTEMS <br /> COMPROMISED
-              </h2>
-              <div className="h-px w-full bg-gradient-to-r from-transparent via-red-500/30 to-transparent mb-6" />
-              <p className="text-red-400 font-mono text-sm leading-relaxed uppercase tracking-widest mb-10">
-                Payload successfully deployed. <br />
-                <span className="opacity-60">Credentials leaked to external enclave.</span>
-              </p>
 
-              <div className="flex gap-4 justify-center">
-                <button onClick={onDismiss} className="px-6 py-3 bg-red-950/40 text-red-400 border border-red-500/30 hover:bg-red-900/60 font-black uppercase text-xs tracking-widest rounded-xl transition-all">
-                  View Analysis
-                </button>
-                <button onClick={onExit} className="px-8 py-3 bg-red-600 hover:bg-white hover:text-red-600 text-white font-black uppercase text-xs tracking-[0.2em] rounded-xl transition-all shadow-[0_0_20px_rgba(239,68,68,0.4)]">
-                  Abort Mission
-                </button>
-              </div>
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.97 }}
+                onClick={handleDismiss}
+                className="w-full py-3 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold text-xs uppercase tracking-[0.15em] rounded-xl hover:bg-emerald-500/20 transition-all"
+              >
+                Continue Scanning
+              </motion.button>
             </motion.div>
           </motion.div>
         )}
@@ -499,62 +616,82 @@ export default function Desktop({ status, onFail, onSuccess, onExit, onDismiss, 
             className="absolute inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm cursor-pointer"
           >
             <motion.div
-              initial={{ scale: 0.9, y: 20 }}
-              animate={{ scale: 1, y: 0 }}
-              className="relative p-12 bg-black/90 border border-emerald-500/50 rounded-[2.5rem] shadow-[0_0_100px_rgba(34,197,94,0.3)] text-center max-w-lg"
+              initial={{ scale: 0.85, opacity: 0, y: 15, rotate: -1 }}
+              animate={{ scale: 1, opacity: 1, y: 0, rotate: 0 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ type: 'spring', damping: 22, stiffness: 350 }}
+              onClick={(e) => e.stopPropagation()}
+              className="relative bg-[#0c0c0f] border border-red-500/20 rounded-2xl p-8 text-center max-w-sm shadow-[0_0_60px_rgba(239,68,68,0.15)]"
             >
-              <div className="w-24 h-24 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-8 border border-emerald-500/30">
-                <CheckCircle2 size={48} className="text-emerald-500" />
-              </div>
-              <h2 className="text-4xl font-black text-emerald-500 mb-6 tracking-tighter leading-tight" style={{ fontFamily: 'var(--font-heading)' }}>
-                DIRECTIVE <br /> SECURED
-              </h2>
-              <div className="h-px w-full bg-gradient-to-r from-transparent via-emerald-500/30 to-transparent mb-6" />
-              <p className="text-white/60 font-mono text-sm uppercase tracking-widest leading-relaxed mb-10">
-                Threat neutralized effectively. <br />
-                <span className="text-emerald-400">X-Ray analysis mode now active.</span>
+              <button
+                onClick={handleDismiss}
+                className="absolute top-4 right-4 p-1.5 rounded-lg text-white/20 hover:text-white/60 hover:bg-white/5 transition-all"
+              >
+                <X size={16} />
+              </button>
+
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: [0, 1.2, 1] }}
+                transition={{ duration: 0.4, delay: 0.1 }}
+                className="w-14 h-14 bg-red-500/10 rounded-xl flex items-center justify-center mx-auto mb-5 border border-red-500/20"
+              >
+                <XCircle size={28} className="text-red-400" />
+              </motion.div>
+
+              <h3 className="text-xl font-black text-red-400 mb-2 tracking-tight">Compromised</h3>
+              <p className="text-sm text-white/30 mb-6 leading-relaxed">
+                That was a trap! In a real scenario, your credentials could have been stolen. Stay vigilant.
               </p>
 
-              <div className="flex gap-4 justify-center">
-                <button onClick={onDismiss} className="px-6 py-3 bg-emerald-950/40 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-900/60 font-black uppercase text-xs tracking-widest rounded-xl transition-all">
-                  Explore X-Ray
-                </button>
-                <button onClick={onExit} className="px-8 py-3 bg-emerald-500 hover:bg-white hover:text-emerald-600 text-white font-black uppercase text-xs tracking-[0.2em] rounded-xl transition-all shadow-[0_0_20px_rgba(16,185,129,0.4)]">
-                  Return to Base
-                </button>
-              </div>
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.97 }}
+                onClick={handleDismiss}
+                className="w-full py-3 bg-red-500/10 text-red-400 border border-red-500/20 font-bold text-xs uppercase tracking-[0.15em] rounded-xl hover:bg-red-500/20 transition-all"
+              >
+                Try Again
+              </motion.button>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Main Sandbox Windows */}
-      {simData.payload.type === 'email' && (
-        <WindowWrapper
-          title="SyncMail Enterprise Enclave"
-          defaultSize={{ width: 1000, height: 750 }}
-          defaultPosition={{ x: 50, y: 50 }}
-          onClose={() => { }}
-          onMinimize={() => { }}
-        >
-          <div className="w-full h-full relative" style={{ filter: isXRay ? 'contrast(1.1) brightness(0.95)' : 'none' }}>
-            {isXRay && <div className="scanline-overlay z-[60] opacity-30" />}
-            <SyncMail payload={simData.payload} onFail={onFail} onSuccess={onSuccess} isXRay={isXRay} trackHover={trackHover} trackSafeItemOpen={trackSafeItemOpen} />
-          </div>
-        </WindowWrapper>
+      {/* ===== SCORING SCREEN ===== */}
+      {status === 'completed' && (
+        <ScoringScreen
+          detectedThreats={detectedThreats || []}
+          totalThreats={totalThreats || 0}
+          wrongClicks={wrongClicks || 0}
+          metrics={metrics || {}}
+          onExit={onExit}
+        />
       )}
 
-      {simData.payload.type === 'audio_call' && (
+      {/* ===== MAIN CONTENT ===== */}
+      {category === 'phishing' ? (
+        <div className="absolute inset-0 z-10">
+          <FullScreenSyncMail
+            onReportSuccess={handleReportSuccess}
+            onReportFail={handleReportFail}
+            onClickTrap={handleClickTrap}
+            detectedThreats={detectedThreats || []}
+            isXRay={isXRay}
+            trackHover={trackHover}
+            trackSafeItemOpen={trackSafeItemOpen}
+            sessionInbox={sessionInboxProp}
+            streak={streak}
+          />
+        </div>
+      ) : simData.payload.type === 'audio_call' ? (
         <VishingModule payload={simData.payload} onFail={onFail} onSuccess={onSuccess} onExit={onExit} isXRay={isXRay} />
-      )}
-
-      {simData.payload.type === 'social_dm' && (
+      ) : simData.payload.type === 'social_dm' ? (
         <WindowWrapper
           title={`${simData.payload.platform} Web Portal`}
           defaultSize={{ width: 900, height: 700 }}
           defaultPosition={{ x: 80, y: 60 }}
-          onClose={() => { }}
-          onMinimize={() => { }}
+          onClose={() => {}}
+          onMinimize={() => {}}
         >
           <div className="w-full h-full relative" style={{ filter: isXRay ? 'contrast(1.1) brightness(0.95)' : 'none' }}>
             {isXRay && <div className="scanline-overlay z-[60] opacity-30" />}
@@ -563,7 +700,7 @@ export default function Desktop({ status, onFail, onSuccess, onExit, onDismiss, 
         </WindowWrapper>
       ) : null}
 
-      {simData.payload.type !== 'audio_call' && <Taskbar />}
+      {category !== 'phishing' && category !== 'vishing' && <Taskbar />}
     </div>
   );
 }

@@ -1,9 +1,8 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mail, Phone, MessageSquare, Terminal, Eye, Shield, Play, ArrowLeft, AlertTriangle } from 'lucide-react';
 import { useSimulation } from '../hooks/useSimulation';
 import Desktop from '../components/sandbox/Desktop';
-import VishingAnimation from '../components/common/VishingAnimation';
 import { useTheme } from '../contexts/ThemeContext';
 import { SIMULATION_DATABASE } from '../data/schema';
 
@@ -14,7 +13,7 @@ const THREAT_CATEGORIES = [
 ];
 
 // ===================================================================
-// PHISHING PREVIEW CARD — Mini email client preview (like the Vishing phone preview)
+// PHISHING PREVIEW CARD ΓÇö Mini email client preview (like the Vishing phone preview)
 // ===================================================================
 function PhishingPreviewCard() {
   const [activeRow, setActiveRow] = useState(-1);
@@ -29,9 +28,9 @@ function PhishingPreviewCard() {
   }, []);
 
   const previewEmails = [
-    { sender: 'IT HelpDesk', subject: '🔒 Mandatory Password Reset', threat: true },
+    { sender: 'IT HelpDesk', subject: '≡ƒöÆ Mandatory Password Reset', threat: true },
     { sender: 'Alice Chen', subject: 'Final design assets for v2', threat: false },
-    { sender: 'PayPal Support', subject: '⚠️ Account Limited — Verify', threat: true },
+    { sender: 'PayPal Support', subject: 'ΓÜá∩╕Å Account Limited ΓÇö Verify', threat: true },
   ];
 
   return (
@@ -63,16 +62,18 @@ function PhishingPreviewCard() {
                 x: activeRow >= i ? 0 : -10,
               }}
               transition={{ duration: 0.4 }}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg mb-1 transition-all duration-500 ${scanned && email.threat
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg mb-1 transition-all duration-500 ${
+                scanned && email.threat
                   ? 'bg-red-500/[0.08] border border-red-500/20'
                   : scanned && !email.threat
                     ? 'bg-emerald-500/[0.04] border border-emerald-500/10'
                     : 'bg-white/[0.02] border border-transparent'
-                }`}
+              }`}
             >
-              <div className={`w-1.5 h-1.5 rounded-full transition-all duration-500 ${scanned && email.threat ? 'bg-red-400 shadow-[0_0_6px_rgba(239,68,68,0.5)]' :
-                  scanned && !email.threat ? 'bg-emerald-400' : 'bg-accent/50'
-                }`} />
+              <div className={`w-1.5 h-1.5 rounded-full transition-all duration-500 ${
+                scanned && email.threat ? 'bg-red-400 shadow-[0_0_6px_rgba(239,68,68,0.5)]' :
+                scanned && !email.threat ? 'bg-emerald-400' : 'bg-accent/50'
+              }`} />
               <div className="flex-1 min-w-0">
                 <div className="text-[10px] font-bold text-white/60 truncate">{email.sender}</div>
                 <div className="text-[9px] text-white/25 truncate">{email.subject}</div>
@@ -139,7 +140,6 @@ function PhishingPreviewCard() {
 
 export default function Arena() {
   const [activeCategory, setActiveCategory] = useState('phishing');
-  const [showOperationInfo, setShowOperationInfo] = useState(false);
   const [hackerPOV, setHackerPOV] = useState(false);
   const { theme } = useTheme();
 
@@ -154,7 +154,6 @@ export default function Arena() {
     exitSimulation,
     trackHover,
     trackSafeItemOpen,
-    dismissOverlay,
     detectedThreats,
     totalThreats,
     wrongClicks,
@@ -227,8 +226,6 @@ export default function Arena() {
             status={simulationStatus}
             onFail={failSimulation}
             onSuccess={succeedSimulation}
-            onExit={exitSimulation}
-            onDismiss={dismissOverlay}
             isXRay={xRayMode}
             category={activeCategory}
             trackHover={trackHover}
@@ -242,6 +239,7 @@ export default function Arena() {
             onDismissFeedback={dismissFeedback}
             onCheckCompletion={checkCompletion}
             metrics={metrics}
+            onExit={exitSimulation}
             setSimulationStatus={setSimulationStatus}
           />
         </div>
@@ -273,19 +271,21 @@ export default function Arena() {
         <div className="flex items-center gap-2 p-1.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-black/5 dark:border-white/10 relative z-10 shadow-inner">
           <button
             onClick={() => setHackerPOV(false)}
-            className={`flex items-center gap-2 px-6 py-2 rounded-lg text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 ${!hackerPOV
+            className={`flex items-center gap-2 px-6 py-2 rounded-lg text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 ${
+              !hackerPOV
                 ? 'bg-accent text-white shadow-[0_8px_16px_-4px_rgba(45,91,255,0.4)]'
                 : 'text-slate-500 dark:text-white/40 hover:text-slate-900 dark:hover:text-white'
-              }`}
+            }`}
           >
             <Eye size={14} /> Defender
           </button>
           <button
             onClick={() => setHackerPOV(true)}
-            className={`flex items-center gap-2 px-6 py-2 rounded-lg text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 ${hackerPOV
+            className={`flex items-center gap-2 px-6 py-2 rounded-lg text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 ${
+              hackerPOV
                 ? 'bg-red-600 text-white shadow-[0_8px_16px_-4px_rgba(239,68,68,0.4)]'
                 : 'text-slate-500 dark:text-white/40 hover:text-slate-900 dark:hover:text-white'
-              }`}
+            }`}
           >
             <Terminal size={14} /> Hacker
           </button>
@@ -303,37 +303,37 @@ export default function Arena() {
               return (
                 <button
                   key={cat.id}
-                  onClick={() => {
-                    setActiveCategory(cat.id);
-                    setShowOperationInfo(false);
-                  }}
-                  className={`w-full flex items-center justify-between p-4 rounded-2xl transition-all group border ${isActive
+                  onClick={() => setActiveCategory(cat.id)}
+                  className={`w-full flex items-center justify-between p-4 rounded-2xl transition-all group border ${
+                    isActive
                       ? 'bg-accent/10 border-accent/30 text-accent ring-2 ring-accent/10 shadow-sm'
                       : 'border-transparent text-slate-500 dark:text-white/50 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white'
-                    }`}
+                  }`}
                 >
                   <div className="flex items-center gap-4">
                     <Icon size={18} className={isActive ? 'text-accent' : 'text-slate-400 dark:text-white/40 group-hover:text-slate-900 dark:group-hover:text-white'} />
                     <span className="text-sm font-bold tracking-wide uppercase">{cat.title}</span>
                   </div>
-                  <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-lg ${isActive ? 'bg-accent/20 text-accent' : 'bg-slate-100 dark:bg-white/5 text-slate-400 dark:text-white/30'
-                    }`}>{cat.count}</span>
+                  <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-lg ${
+                    isActive ? 'bg-accent/20 text-accent' : 'bg-slate-100 dark:bg-white/5 text-slate-400 dark:text-white/30'
+                  }`}>{cat.count}</span>
                 </button>
               );
             })}
           </div>
           <div className="mt-auto p-4 rounded-2xl bg-amber-500/5 border border-amber-500/10 text-center">
             <p className="text-[10px] font-bold text-amber-600 dark:text-amber-500 uppercase tracking-widest leading-loose">
-              More modules <br /> arriving soon
+              More modules <br/> arriving soon
             </p>
           </div>
         </div>
 
-        {/* Main Content — Vertical layout like Vishing */}
-        <div className={`flex-1 rounded-[2rem] border transition-all duration-700 overflow-hidden flex flex-col relative shadow-xl dark:shadow-none ${hackerPOV
+        {/* Main Content ΓÇö Vertical layout like Vishing */}
+        <div className={`flex-1 rounded-[2rem] border transition-all duration-700 overflow-hidden flex flex-col relative shadow-xl dark:shadow-none ${
+          hackerPOV
             ? 'bg-[#0A0A0B] border-red-500/30'
             : 'glass-panel border-black/5 dark:border-white/10'
-          }`}>
+        }`}>
           <AnimatePresence mode="wait">
             <motion.div
               key={hackerPOV ? 'hacker' : `defender-${activeCategory}`}
@@ -371,141 +371,83 @@ export default function Arena() {
                     </div>
                   </div>
                 </div>
-              ) : (SIMULATION_DATABASE[activeCategory]?.concept && !showOperationInfo) ? (
-                // Defender Concept View
-                <div className="p-12 flex-1 flex flex-col relative justify-center">
-                  <div className="max-w-2xl relative z-10 mx-auto text-center md:text-left">
-                    <h2 className="text-4xl md:text-6xl font-black text-slate-950 dark:text-white mb-8 tracking-[-0.03em] leading-tight transition-colors" style={{ fontFamily: 'var(--font-heading)' }}>
-                      {SIMULATION_DATABASE[activeCategory].concept.title}
-                    </h2>
-                    <p className="text-base md:text-lg text-slate-600 dark:text-white/50 leading-relaxed max-w-xl mb-12 font-medium transition-colors">
-                      {SIMULATION_DATABASE[activeCategory].concept.description}
-                    </p>
+              ) : (
+                /* ===== DEFENDER VIEW ΓÇö VERTICAL LAYOUT (matches Vishing style) ===== */
+                <div className="p-12 flex-1 flex flex-col relative overflow-y-auto custom-scrollbar">
+                  <div className="max-w-2xl mx-auto w-full flex flex-col items-center text-center relative z-10">
 
-                    {SIMULATION_DATABASE[activeCategory].concept.videoUrl && (
-                      SIMULATION_DATABASE[activeCategory].concept.videoUrl === 'component:VishingAnimation' ? (
-                        <div className="w-full max-w-lg mb-12 shadow-[0_0_60px_rgba(255,0,60,0.1)] opacity-95 relative rounded-3xl overflow-hidden" style={{ aspectRatio: '16/9' }}>
-                          <VishingAnimation />
-                        </div>
-                      ) : String(SIMULATION_DATABASE[activeCategory].concept.videoUrl).includes('youtube') ? (
-                        <div className="w-full max-w-lg rounded-2xl border border-black/10 dark:border-white/10 mb-12 shadow-xl overflow-hidden opacity-80 relative" style={{ paddingTop: '56.25%' }}>
-                          <iframe
-                            src={SIMULATION_DATABASE[activeCategory].concept.videoUrl}
-                            className="absolute top-0 left-0 w-full h-full"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowFullScreen
-                          />
-                        </div>
-                      ) : String(SIMULATION_DATABASE[activeCategory].concept.videoUrl).endsWith('.mp4') ? (
-                        <video src={SIMULATION_DATABASE[activeCategory].concept.videoUrl} autoPlay loop muted playsInline className="w-full max-w-lg rounded-2xl border border-black/10 dark:border-white/10 mb-12 shadow-xl opacity-80 object-cover" style={{ aspectRatio: '16/9' }} />
-                      ) : (
-                        <div className="w-full max-w-lg rounded-2xl border border-black/10 dark:border-white/10 mb-12 shadow-xl overflow-hidden opacity-80 relative" style={{ aspectRatio: '16/9' }}>
-                          <motion.img
-                            src={SIMULATION_DATABASE[activeCategory].concept.videoUrl}
-                            animate={{ scale: [1, 1.1, 1], rotate: [0, 1, 0] }}
-                            transition={{ duration: 15, repeat: Infinity, ease: 'linear' }}
-                            className="absolute top-0 left-0 w-full h-full object-cover"
-                          />
-                        </div>
-                      )
-                    )}
-
-                    <button
-                      onClick={() => setShowOperationInfo(true)}
-                      className="group relative inline-flex items-center justify-center gap-4 px-12 py-6 bg-slate-950 dark:bg-accent text-white text-sm font-black uppercase tracking-[0.2em] rounded-2xl overflow-hidden shadow-lg hover:shadow-[0_20px_40px_rgba(45,91,255,0.4)] transition-all hover:-translate-y-1 active:translate-y-0"
+                    {/* Big Title */}
+                    <motion.h2
+                      initial={{ opacity: 0, y: 15 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.1 }}
+                      className="text-5xl md:text-7xl font-black text-slate-950 dark:text-white mb-6 tracking-[-0.04em] leading-none transition-colors uppercase"
+                      style={{ fontFamily: 'var(--font-heading)' }}
                     >
-                      <div className="absolute inset-0 bg-accent dark:bg-white transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700 origin-left" />
-                      <span className="relative z-10 transition-colors group-hover:text-white dark:group-hover:text-black">Simulation</span>
-                    </button>
+                      {activeCategory === 'phishing' ? 'PHISHING' :
+                       activeCategory === 'vishing' ? 'VISHING' : 'SOCIAL ENG.'}
+                    </motion.h2>
+
+                    {/* Description */}
+                    <motion.p
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.2 }}
+                      className="text-sm md:text-base text-slate-600 dark:text-white/40 leading-relaxed font-medium mb-10 max-w-lg transition-colors"
+                    >
+                      {activeCategory === 'phishing'
+                        ? 'Phishing is a form of cyberattack where threat actors craft deceptive emails impersonating trusted brands, colleagues, or institutionsΓÇöto trick targets into clicking malicious links, revealing credentials, or downloading malware.'
+                        : SIMULATION_DATABASE[activeCategory]?.briefing}
+                    </motion.p>
+
+                    {/* Preview Card (centered, like the Vishing phone card) */}
+                    {activeCategory === 'phishing' && <PhishingPreviewCard />}
+
+                    {/* Flag indicators */}
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.6 }}
+                      className="flex flex-wrap gap-3 justify-center mt-10 mb-10"
+                    >
+                      {SIMULATION_DATABASE[activeCategory]?.flags.map((flag, i) => (
+                        <motion.div
+                          key={i}
+                          initial={{ opacity: 0, y: 8 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.7 + (i * 0.08) }}
+                          className="flex items-center gap-3 text-[11px] font-bold text-slate-700 dark:text-white/60 bg-white dark:bg-white/[0.03] border border-black/5 dark:border-white/[0.06] px-4 py-2.5 rounded-xl"
+                        >
+                          <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: flag.color === 'red-500' ? '#EF4444' : flag.color === 'amber-500' ? '#F59E0B' : flag.color === 'accent' ? '#2D5BFF' : '#22C55E', boxShadow: `0 0 8px ${flag.color === 'red-500' ? '#EF4444' : flag.color === 'amber-500' ? '#F59E0B' : flag.color === 'accent' ? '#2D5BFF' : '#22C55E'}` }} />
+                          <span className="uppercase tracking-widest">{flag.text}</span>
+                        </motion.div>
+                      ))}
+                    </motion.div>
+
+                    {/* CTA Button */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.9 }}
+                    >
+                      <button
+                        onClick={handleStart}
+                        className="group relative inline-flex items-center gap-4 px-12 py-6 bg-accent text-white text-sm font-black uppercase tracking-[0.2em] rounded-2xl overflow-hidden hover:shadow-[0_20px_40px_rgba(45,91,255,0.35)] transition-all hover:-translate-y-1 active:translate-y-0 active:scale-[0.98]"
+                      >
+                        <div className="absolute inset-0 bg-white/10 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
+                        <Play size={18} className="relative z-10" />
+                        <span className="relative z-10">Simulation</span>
+                      </button>
+                    </motion.div>
                   </div>
-                  {/* UI Decor */}
-                  <div className="absolute right-0 bottom-0 opacity-[0.03] dark:opacity-[0.05] pointer-events-none -mr-20 -mb-20">
-                    <Shield size={600} />
+
+                  {/* Background shield decor */}
+                  <div className="absolute right-0 bottom-0 opacity-[0.03] dark:opacity-[0.04] pointer-events-none -mr-20 -mb-20">
+                    <Shield size={500} />
                   </div>
                 </div>
-              ) : (
-                    /* ===== DEFENDER VIEW — VERTICAL LAYOUT (matches Vishing style) ===== */
-                    <div className="p-12 flex-1 flex flex-col relative overflow-y-auto custom-scrollbar">
-                      <div className="max-w-2xl mx-auto w-full flex flex-col items-center text-center relative z-10">
-
-                        {/* Little pulsing indicator & Briefing title */}
-                        <motion.div
-                          initial={{ opacity: 0, x: -10 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          className="flex items-center gap-3 text-xs font-bold text-accent uppercase tracking-[0.2em] mb-6"
-                        >
-                          <div className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
-                          Intelligence Briefing
-                        </motion.div>
-
-                        <h2 className="text-4xl md:text-6xl font-black text-slate-950 dark:text-white mb-8 tracking-[-0.03em] leading-tight transition-colors" style={{ fontFamily: 'var(--font-heading)' }}>
-                          {SIMULATION_DATABASE[activeCategory]?.title?.split(': ').map((part, i) => (
-                            <span key={i}>
-                              {part}
-                              {i === 0 && <><br className="hidden md:block" /></>}
-                            </span>
-                          ))}
-                        </h2>
-
-                        {/* Description */}
-                        <motion.p
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.2 }}
-                          className="text-base md:text-lg text-slate-600 dark:text-white/50 leading-relaxed max-w-xl mb-12 font-medium transition-colors"
-                        >
-                          {activeCategory === 'phishing'
-                            ? 'Phishing is a form of cyberattack where threat actors craft deceptive emails impersonating trusted brands, colleagues, or institutions—to trick targets into clicking malicious links, revealing credentials, or downloading malware.'
-                            : SIMULATION_DATABASE[activeCategory]?.briefing}
-                        </motion.p>
-                      {/* Preview Card (centered, like the Vishing phone card) */}
-                      {activeCategory === 'phishing' && <PhishingPreviewCard />}
-
-                      {/* Flag indicators */}
-                      <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.6 }}
-                        className="flex flex-wrap gap-3 justify-center mt-10 mb-10"
-                      >
-                        {SIMULATION_DATABASE[activeCategory]?.flags.map((flag, i) => (
-                          <motion.div
-                            key={i}
-                            initial={{ opacity: 0, y: 8 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.7 + (i * 0.08) }}
-                            className="flex items-center gap-3 text-[11px] font-bold text-slate-700 dark:text-white/60 bg-white dark:bg-white/[0.03] border border-black/5 dark:border-white/[0.06] px-4 py-2.5 rounded-xl"
-                          >
-                            <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: flag.color === 'red-500' ? '#EF4444' : flag.color === 'amber-500' ? '#F59E0B' : flag.color === 'accent' ? '#2D5BFF' : '#22C55E', boxShadow: `0 0 8px ${flag.color === 'red-500' ? '#EF4444' : flag.color === 'amber-500' ? '#F59E0B' : flag.color === 'accent' ? '#2D5BFF' : '#22C55E'}` }} />
-                            <span className="uppercase tracking-widest">{flag.text}</span>
-                          </motion.div>
-                        ))}
-                      </motion.div>
-
-                      {/* CTA Button */}
-                      <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.9 }}
-                      >
-                        <button
-                          onClick={handleStart}
-                          className="group relative inline-flex items-center gap-4 px-12 py-6 bg-accent text-white text-sm font-black uppercase tracking-[0.2em] rounded-2xl overflow-hidden hover:shadow-[0_20px_40px_rgba(45,91,255,0.35)] transition-all hover:-translate-y-1 active:translate-y-0 active:scale-[0.98]"
-                        >
-                          <div className="absolute inset-0 bg-white/10 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
-                          <Play size={18} className="relative z-10" />
-                          <span className="relative z-10">Simulation</span>
-                        </button>
-                      </motion.div>
-                    </div>
-
-                    {/* Background shield decor */}
-                    <div className="absolute right-0 bottom-0 opacity-[0.03] dark:opacity-[0.04] pointer-events-none -mr-20 -mb-20">
-                      <Shield size={500} />
-                    </div>
-                  </div>
               )}
-                </motion.div>
+            </motion.div>
           </AnimatePresence>
         </div>
       </div>
