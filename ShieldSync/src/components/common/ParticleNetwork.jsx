@@ -40,36 +40,25 @@ export default function ParticleNetwork() {
         };
         window.addEventListener('resize', resize);
 
-        // Particle Object
-        class Particle {
-            constructor(x, y, directionX, directionY, size, color) {
-                this.x = x;
-                this.y = y;
-                this.directionX = directionX;
-                this.directionY = directionY;
-                this.size = size;
-                this.color = color;
-            }
-
-            draw() {
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
-                ctx.fillStyle = this.color;
-                ctx.fill();
-            }
-
-            update() {
-                // Bounce off screen edges
-                if (this.x > canvas.width || this.x < 0) this.directionX = -this.directionX;
-                if (this.y > canvas.height || this.y < 0) this.directionY = -this.directionY;
-
-                // Move particle
-                this.x += this.directionX;
-                this.y += this.directionY;
-
-                this.draw();
-            }
-        }
+        // Particle Object Factory
+        const createParticle = (x, y, directionX, directionY, size, color) => {
+            return {
+                x, y, directionX, directionY, size, color,
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
+                    ctx.fillStyle = this.color;
+                    ctx.fill();
+                },
+                update() {
+                    if (this.x > canvas.width || this.x < 0) this.directionX = -this.directionX;
+                    if (this.y > canvas.height || this.y < 0) this.directionY = -this.directionY;
+                    this.x += this.directionX;
+                    this.y += this.directionY;
+                    this.draw();
+                }
+            };
+        };
 
         // Initialize particle network
         function init() {
@@ -86,7 +75,7 @@ export default function ParticleNetwork() {
                 let directionY = (Math.random() * 1) - 0.5;
                 let color = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
 
-                particlesArray.push(new Particle(x, y, directionX, directionY, size, color));
+                particlesArray.push(createParticle(x, y, directionX, directionY, size, color));
             }
         }
 

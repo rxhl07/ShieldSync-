@@ -1,0 +1,99 @@
+﻿
+C:\Users\rahul\OneDrive\Documents\projects\ShieldSync-\ShieldSync\src\components\common\Cursor.jsx
+  2:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\rahul\OneDrive\Documents\projects\ShieldSync-\ShieldSync\src\components\common\Navbar.jsx
+  6:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\rahul\OneDrive\Documents\projects\ShieldSync-\ShieldSync\src\components\common\ParticleNetwork.jsx
+  44:9  warning  Compilation Skipped: Inline `class` declarations are not supported
+
+Move class declarations outside of components/hooks.
+
+  42 |
+  43 |         // Particle Object
+> 44 |         class Particle {
+     |         ^^^^^^^^^^^^^^^^
+> 45 |             constructor(x, y, directionX, directionY, size, color) {
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 46 |                 this.x = x;
+     ΓÇª
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 71 |             }
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 72 |         }
+     | ^^^^^^^^^^ Inline `class` declarations are not supported
+  73 |
+  74 |         // Initialize particle network
+  75 |         function init() {
+
+  react-hooks/unsupported-syntax
+
+C:\Users\rahul\OneDrive\Documents\projects\ShieldSync-\ShieldSync\src\components\dashboard\CreditGauge.jsx
+   2:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u          no-unused-vars
+  14:9   error  'start' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\rahul\OneDrive\Documents\projects\ShieldSync-\ShieldSync\src\components\dashboard\DailyMission.jsx
+  1:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u           no-unused-vars
+  7:9   error  'isDark' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\rahul\OneDrive\Documents\projects\ShieldSync-\ShieldSync\src\components\dashboard\Leaderboard.jsx
+   1:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u           no-unused-vars
+  15:9   error  'isDark' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\rahul\OneDrive\Documents\projects\ShieldSync-\ShieldSync\src\components\dashboard\RadarChart.jsx
+  1:10  error  'useEffect' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\rahul\OneDrive\Documents\projects\ShieldSync-\ShieldSync\src\components\landing\Features.jsx
+  2:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\rahul\OneDrive\Documents\projects\ShieldSync-\ShieldSync\src\components\landing\HeroSection.jsx
+  2:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\rahul\OneDrive\Documents\projects\ShieldSync-\ShieldSync\src\components\landing\MiniGame.jsx
+  2:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\rahul\OneDrive\Documents\projects\ShieldSync-\ShieldSync\src\components\landing\StatsAndCTA.jsx
+  2:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\rahul\OneDrive\Documents\projects\ShieldSync-\ShieldSync\src\components\sandbox\Desktop.jsx
+  2:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\rahul\OneDrive\Documents\projects\ShieldSync-\ShieldSync\src\components\sandbox\SocialModule.jsx
+  2:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\rahul\OneDrive\Documents\projects\ShieldSync-\ShieldSync\src\components\sandbox\Taskbar.jsx
+  1:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u          no-unused-vars
+  7:11  error  'theme' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\rahul\OneDrive\Documents\projects\ShieldSync-\ShieldSync\src\components\sandbox\VishingModule.jsx
+  3:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\rahul\OneDrive\Documents\projects\ShieldSync-\ShieldSync\src\components\sandbox\WindowWrapper.jsx
+  2:10   error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u           no-unused-vars
+  5:100  error  'onMaximize' is defined but never used                                                  no-unused-vars
+  9:9    error  'isDark' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\rahul\OneDrive\Documents\projects\ShieldSync-\ShieldSync\src\contexts\ThemeContext.jsx
+  37:14  error  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\rahul\OneDrive\Documents\projects\ShieldSync-\ShieldSync\src\hooks\useSimulation.js
+  1:33  error  'useEffect' is defined but never used. Allowed unused vars must match /^[A-Z_]/u         no-unused-vars
+  8:10  error  'metrics' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\rahul\OneDrive\Documents\projects\ShieldSync-\ShieldSync\src\layouts\Layout.jsx
+   2:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u           no-unused-vars
+  19:9   error  'isDark' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\rahul\OneDrive\Documents\projects\ShieldSync-\ShieldSync\src\pages\Arena.jsx
+   2:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u                    no-unused-vars
+  19:9   error  'isDark' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u           no-unused-vars
+  23:5   error  'glitchTriggered' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\rahul\OneDrive\Documents\projects\ShieldSync-\ShieldSync\src\pages\Dashboard.jsx
+   2:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u          no-unused-vars
+  12:11  error  'theme' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+  68:11  error  'theme' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+Γ£û 33 problems (32 errors, 1 warning)
+

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { PhoneCall, Phone, MicOff, Keypad, Volume2, ShieldAlert } from 'lucide-react';
+import { PhoneCall, Phone, MicOff, Grid, Volume2, ShieldAlert } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function VishingModule({ payload, onFail, onSuccess, isXRay }) {
@@ -115,7 +115,7 @@ export default function VishingModule({ payload, onFail, onSuccess, isXRay }) {
                 <div className="space-y-6 pb-6">
                    <div className="grid grid-cols-3 gap-4 px-6 text-white text-[10px] uppercase text-center font-medium">
                       <div className="flex flex-col items-center gap-2 opacity-50"><MicOff size={24} /><span>Mute</span></div>
-                      <div className="flex flex-col items-center gap-2 opacity-50"><Keypad size={24} /><span>Keypad</span></div>
+                      <div className="flex flex-col items-center gap-2 opacity-50"><Grid size={24} /><span>Keypad</span></div>
                       <div className="flex flex-col items-center gap-2 opacity-50"><Volume2 size={24} /><span>Speaker</span></div>
                    </div>
                    
