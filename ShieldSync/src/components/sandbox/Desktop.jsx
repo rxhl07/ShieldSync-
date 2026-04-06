@@ -1,12 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence, useAnimation } from 'framer-motion';
-<<<<<<< Updated upstream
-import { Mail, Search, ArrowLeft, ShieldAlert, CheckCircle2, XCircle, X, Trophy, Target, Clock, AlertTriangle, Zap, Flame, Shield } from 'lucide-react';
-import Taskbar from './Taskbar';
-=======
 import { Mail, Search, ArrowLeft, ShieldAlert, CheckCircle2, XCircle, X, Trophy, Target, Clock, AlertTriangle, Zap, Flame, Shield, Info, Eye } from 'lucide-react';
-
->>>>>>> Stashed changes
+import Taskbar from './Taskbar';
 import VishingModule from './VishingModule';
 import SocialModule from './SocialModule';
 import WindowWrapper from './WindowWrapper';
@@ -364,12 +359,8 @@ function EmailReviewScreen({ email, resultType, onContinue }) {
 function FullScreenSyncMail({ onReportSuccess, onReportFail, onReportFalsePositive, onClickTrap, detectedThreats, isXRay, trackHover, trackSafeItemOpen, sessionInbox, streak }) {
   const [selectedEmail, setSelectedEmail] = useState(null);
   const [shakeEmail, setShakeEmail] = useState(false);
-<<<<<<< Updated upstream
-  const inbox = sessionInbox;
-=======
   const [readEmails, setReadEmails] = useState(new Set()); // tracks which emails have been opened
   const inbox = sessionInbox || [];
->>>>>>> Stashed changes
 
   const isDetected = (emailId) => detectedThreats.includes(emailId);
 
@@ -788,8 +779,6 @@ export default function Desktop({ status, onFail, onSuccess, isXRay, category, t
     setReviewType('trap');
   }, [onReportFail, addToast]);
 
-<<<<<<< Updated upstream
-=======
   const handleSafeLink = useCallback(() => {
     addToast('success', 'Safe Link Verified! No threat found.');
     addXP();
@@ -810,7 +799,6 @@ export default function Desktop({ status, onFail, onSuccess, isXRay, category, t
   }, [onDismissFeedback, onCheckCompletion, reviewType]);
 
   // Legacy dismiss handler for non-phishing modules
->>>>>>> Stashed changes
   const handleDismiss = useCallback(() => {
     if (onDismissFeedback) onDismissFeedback();
 
@@ -1037,9 +1025,6 @@ export default function Desktop({ status, onFail, onSuccess, isXRay, category, t
         >
           <div className="w-full h-full relative" style={{ filter: isXRay ? 'contrast(1.1) brightness(0.95)' : 'none' }}>
             {isXRay && <div className="scanline-overlay z-[60] opacity-30" />}
-<<<<<<< Updated upstream
-            <SocialModule payload={simData.payload} onFail={onFail} onSuccess={onSuccess} isXRay={isXRay} trackHover={trackHover} />
-=======
             <SocialModule 
               payload={simData.payload} 
               onFail={handleClickTrap} 
@@ -1050,7 +1035,6 @@ export default function Desktop({ status, onFail, onSuccess, isXRay, category, t
               isXRay={isXRay} 
               trackHover={trackHover} 
             />
->>>>>>> Stashed changes
           </div>
         </WindowWrapper>
       ) : null}
