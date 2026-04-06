@@ -3,12 +3,13 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Shield, Sun, Moon, LogOut } from 'lucide-react';
 import { ROUTES } from '../../utils/constants';
 import { useTheme } from '../../contexts/ThemeContext';
-import { useAuth } from '../../contexts/AuthContext'; // Import our Auth Context
+import { useAuth } from '../../contexts/AuthContext';
 import { motion } from 'framer-motion';
+
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const { theme, toggleTheme } = useTheme();
-  const { isAuthenticated, logout } = useAuth(); // Grab auth state
+  const { isAuthenticated, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -20,7 +21,7 @@ export default function Navbar() {
 
   const handleLogout = () => {
     logout();
-    navigate('/'); // Send them back to the landing page on disconnect
+    navigate('/');
   };
 
   return (
@@ -47,31 +48,33 @@ export default function Navbar() {
           </span>
         </Link>
 
-        {/* Links */}
-        <div className="hidden md:flex items-center gap-8 glass-panel px-6 py-2 rounded-full border-black/5 dark:border-white/10">
-          {[
-            { name: 'Home', path: ROUTES.LANDING },
-            { name: 'Dashboard', path: ROUTES.DASHBOARD },
-            { name: 'Arena', path: ROUTES.ARENA },
-          ].map((item) => (
-            <Link
-              key={item.name}
-              to={item.path}
-              className={`text-xs font-bold uppercase tracking-widest transition-colors relative py-1 ${location.pathname === item.path
-                ? 'text-slate-900 dark:text-white'
-                : 'text-slate-500 dark:text-white/50 hover:text-slate-900 dark:hover:text-white'
-                }`}
-            >
-              {item.name}
-              {location.pathname === item.path && (
-                <motion.div
-                  layoutId="nav-underline"
-                  className="absolute -bottom-1 left-0 w-full h-[2px] bg-[#2D5BFF] shadow-[0_0_10px_rgba(45,91,255,0.5)]"
-                />
-              )}
-            </Link>
-          ))}
-        </div>
+        {/* Links - ONLY VISIBLE IF LOGGED IN */}
+        {isAuthenticated && (
+          <div className="hidden md:flex items-center gap-8 glass-panel px-6 py-2 rounded-full border-black/5 dark:border-white/10">
+            {[
+              { name: 'Home', path: ROUTES.LANDING },
+              { name: 'Dashboard', path: ROUTES.DASHBOARD },
+              { name: 'Arena', path: ROUTES.ARENA },
+            ].map((item) => (
+              <Link
+                key={item.name}
+                to={item.path}
+                className={`text-xs font-bold uppercase tracking-widest transition-colors relative py-1 ${location.pathname === item.path
+                  ? 'text-slate-900 dark:text-white'
+                  : 'text-slate-500 dark:text-white/50 hover:text-slate-900 dark:hover:text-white'
+                  }`}
+              >
+                {item.name}
+                {location.pathname === item.path && (
+                  <motion.div
+                    layoutId="nav-underline"
+                    className="absolute -bottom-1 left-0 w-full h-[2px] bg-[#2D5BFF] shadow-[0_0_10px_rgba(45,91,255,0.5)]"
+                  />
+                )}
+              </Link>
+            ))}
+          </div>
+        )}
 
         {/* Action + Theme Toggle */}
         <div className="flex items-center gap-4">
@@ -93,12 +96,15 @@ export default function Navbar() {
               <LogOut size={14} className="transition-transform group-hover:translate-x-1" />
             </button>
           ) : (
-            <Link
-              to="/login"
-              className="group relative px-6 py-2.5 overflow-hidden rounded-xl bg-[#2D5BFF] text-white text-xs font-bold uppercase tracking-widest transition-all hover:shadow-[0_0_20px_rgba(45,91,255,0.4)] hover:-translate-y-0.5 active:translate-y-0"
-            >
-              <span className="relative z-10 transition-colors">Start Training</span>
-            </Link>
+            /* ONLY SHOW "START TRAINING" IF NOT ON THE LOGIN PAGE */
+            location.pathname !== '/login' && (
+              <Link
+                to="/login"
+                className="group relative px-6 py-2.5 overflow-hidden rounded-xl bg-[#2D5BFF] text-white text-xs font-bold uppercase tracking-widest transition-all hover:shadow-[0_0_20px_rgba(45,91,255,0.4)] hover:-translate-y-0.5 active:translate-y-0"
+              >
+                <span className="relative z-10 transition-colors">Start Training</span>
+              </Link>
+            )
           )}
         </div>
 
