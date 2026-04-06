@@ -20,11 +20,27 @@ function PhishingPreviewCard() {
   const [scanned, setScanned] = useState(false);
 
   useEffect(() => {
-    const t1 = setTimeout(() => setActiveRow(0), 800);
-    const t2 = setTimeout(() => setActiveRow(1), 1400);
-    const t3 = setTimeout(() => setActiveRow(2), 2000);
-    const t4 = setTimeout(() => setScanned(true), 3000);
-    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); };
+    let active = true;
+    (async () => {
+      while (active) {
+        setActiveRow(-1);
+        setScanned(false);
+        await new Promise(r => setTimeout(r, 800));
+        if (!active) break;
+        setActiveRow(0);
+        await new Promise(r => setTimeout(r, 600));
+        if (!active) break;
+        setActiveRow(1);
+        await new Promise(r => setTimeout(r, 600));
+        if (!active) break;
+        setActiveRow(2);
+        await new Promise(r => setTimeout(r, 1000));
+        if (!active) break;
+        setScanned(true);
+        await new Promise(r => setTimeout(r, 3000));
+      }
+    })();
+    return () => { active = false; };
   }, []);
 
   const previewEmails = [
@@ -62,6 +78,7 @@ function PhishingPreviewCard() {
                 x: activeRow >= i ? 0 : -10,
               }}
               transition={{ duration: 0.4 }}
+<<<<<<< Updated upstream
               className={`flex items-center gap-3 px-3 py-2.5 rounded-lg mb-1 transition-all duration-500 ${
                 scanned && email.threat
                   ? 'bg-red-500/[0.08] border border-red-500/20'
@@ -74,6 +91,18 @@ function PhishingPreviewCard() {
                 scanned && email.threat ? 'bg-red-400 shadow-[0_0_6px_rgba(239,68,68,0.5)]' :
                 scanned && !email.threat ? 'bg-emerald-400' : 'bg-accent/50'
               }`} />
+=======
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg mb-1 transition-all duration-500 ${scanned && email.threat
+                ? 'bg-red-500/[0.08] border border-red-500/20'
+                : scanned && !email.threat
+                  ? 'bg-emerald-500/[0.04] border border-emerald-500/10'
+                  : 'bg-white/[0.02] border border-transparent'
+                }`}
+            >
+              <div className={`w-1.5 h-1.5 rounded-full transition-all duration-500 ${scanned && email.threat ? 'bg-red-400 shadow-[0_0_6px_rgba(239,68,68,0.5)]' :
+                scanned && !email.threat ? 'bg-emerald-400' : 'bg-accent/50'
+                }`} />
+>>>>>>> Stashed changes
               <div className="flex-1 min-w-0">
                 <div className="text-[10px] font-bold text-white/60 truncate">{email.sender}</div>
                 <div className="text-[9px] text-white/25 truncate">{email.subject}</div>
@@ -160,6 +189,8 @@ export default function Arena() {
     sessionInbox,
     reportThreatSuccess,
     reportThreatFail,
+    reportFalsePositive,
+    lastActionEmail,
     dismissFeedback,
     checkCompletion,
     metrics,
@@ -175,7 +206,7 @@ export default function Arena() {
     return (
       <div className="h-screen w-full relative z-[100] bg-black overflow-hidden flex flex-col font-mono">
         {/* Top return bar */}
-        <div className="h-14 bg-black border-b border-white/[0.06] flex items-center justify-between px-8 z-50">
+        <div className="h-14 bg-black border-b border-white/[0.06] flex items-center justify-between px-8 z-[200] relative">
           <button
             onClick={exitSimulation}
             className="flex items-center gap-3 text-white/30 hover:text-white text-[10px] font-black uppercase tracking-[0.2em] transition-all hover:gap-4"
@@ -221,7 +252,7 @@ export default function Arena() {
           </div>
         </div>
 
-        <div className="flex-1 relative">
+        <div className="flex-1 relative overflow-hidden">
           <Desktop
             status={simulationStatus}
             onFail={failSimulation}
@@ -236,6 +267,8 @@ export default function Arena() {
             sessionInbox={sessionInbox}
             onReportSuccess={reportThreatSuccess}
             onReportFail={reportThreatFail}
+            onReportFalsePositive={reportFalsePositive}
+            lastActionEmail={lastActionEmail}
             onDismissFeedback={dismissFeedback}
             onCheckCompletion={checkCompletion}
             metrics={metrics}
@@ -271,21 +304,35 @@ export default function Arena() {
         <div className="flex items-center gap-2 p-1.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-black/5 dark:border-white/10 relative z-10 shadow-inner">
           <button
             onClick={() => setHackerPOV(false)}
+<<<<<<< Updated upstream
             className={`flex items-center gap-2 px-6 py-2 rounded-lg text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 ${
               !hackerPOV
                 ? 'bg-accent text-white shadow-[0_8px_16px_-4px_rgba(45,91,255,0.4)]'
                 : 'text-slate-500 dark:text-white/40 hover:text-slate-900 dark:hover:text-white'
             }`}
+=======
+            className={`flex items-center gap-2 px-6 py-2 rounded-lg text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 ${!hackerPOV
+              ? 'bg-accent text-white shadow-[0_8px_16px_-4px_rgba(45,91,255,0.4)]'
+              : 'text-slate-500 dark:text-white/40 hover:text-slate-900 dark:hover:text-white'
+              }`}
+>>>>>>> Stashed changes
           >
             <Eye size={14} /> Defender
           </button>
           <button
             onClick={() => setHackerPOV(true)}
+<<<<<<< Updated upstream
             className={`flex items-center gap-2 px-6 py-2 rounded-lg text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 ${
               hackerPOV
                 ? 'bg-red-600 text-white shadow-[0_8px_16px_-4px_rgba(239,68,68,0.4)]'
                 : 'text-slate-500 dark:text-white/40 hover:text-slate-900 dark:hover:text-white'
             }`}
+=======
+            className={`flex items-center gap-2 px-6 py-2 rounded-lg text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 ${hackerPOV
+              ? 'bg-red-600 text-white shadow-[0_8px_16px_-4px_rgba(239,68,68,0.4)]'
+              : 'text-slate-500 dark:text-white/40 hover:text-slate-900 dark:hover:text-white'
+              }`}
+>>>>>>> Stashed changes
           >
             <Terminal size={14} /> Hacker
           </button>
@@ -303,12 +350,23 @@ export default function Arena() {
               return (
                 <button
                   key={cat.id}
+<<<<<<< Updated upstream
                   onClick={() => setActiveCategory(cat.id)}
                   className={`w-full flex items-center justify-between p-4 rounded-2xl transition-all group border ${
                     isActive
                       ? 'bg-accent/10 border-accent/30 text-accent ring-2 ring-accent/10 shadow-sm'
                       : 'border-transparent text-slate-500 dark:text-white/50 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white'
                   }`}
+=======
+                  onClick={() => {
+                    setActiveCategory(cat.id);
+                    setShowOperationInfo(false);
+                  }}
+                  className={`w-full flex items-center justify-between p-4 rounded-2xl transition-all group border ${isActive
+                    ? 'bg-accent/10 border-accent/30 text-accent ring-2 ring-accent/10 shadow-sm'
+                    : 'border-transparent text-slate-500 dark:text-white/50 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white'
+                    }`}
+>>>>>>> Stashed changes
                 >
                   <div className="flex items-center gap-4">
                     <Icon size={18} className={isActive ? 'text-accent' : 'text-slate-400 dark:text-white/40 group-hover:text-slate-900 dark:group-hover:text-white'} />
@@ -329,11 +387,18 @@ export default function Arena() {
         </div>
 
         {/* Main Content — Vertical layout like Vishing */}
+<<<<<<< Updated upstream
         <div className={`flex-1 rounded-[2rem] border transition-all duration-700 overflow-hidden flex flex-col relative shadow-xl dark:shadow-none ${
           hackerPOV
             ? 'bg-[#0A0A0B] border-red-500/30'
             : 'glass-panel border-black/5 dark:border-white/10'
         }`}>
+=======
+        <div className={`flex-1 rounded-[2rem] border transition-all duration-700 overflow-hidden flex flex-col relative shadow-xl dark:shadow-none ${hackerPOV
+          ? 'bg-[#0A0A0B] border-red-500/30'
+          : 'glass-panel border-black/5 dark:border-white/10'
+          }`}>
+>>>>>>> Stashed changes
           <AnimatePresence mode="wait">
             <motion.div
               key={hackerPOV ? 'hacker' : `defender-${activeCategory}`}
@@ -446,6 +511,90 @@ export default function Arena() {
                     <Shield size={500} />
                   </div>
                 </div>
+<<<<<<< Updated upstream
+=======
+              ) : (
+                /* ===== DEFENDER VIEW — VERTICAL LAYOUT (matches Vishing style) ===== */
+                <div className="p-12 flex-1 flex flex-col relative overflow-y-auto custom-scrollbar">
+                  <div className="max-w-2xl mx-auto w-full flex flex-col items-center text-center relative z-10">
+
+                    {/* Little pulsing indicator & Briefing title */}
+                    <motion.div
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      className="flex items-center gap-3 text-xs font-bold text-accent uppercase tracking-[0.2em] mb-6"
+                    >
+                      <div className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
+                      Intelligence Briefing
+                    </motion.div>
+
+                    <h2 className="text-4xl md:text-6xl font-black text-slate-950 dark:text-white mb-8 tracking-[-0.03em] leading-tight transition-colors" style={{ fontFamily: 'var(--font-heading)' }}>
+                      {SIMULATION_DATABASE[activeCategory]?.title?.split(': ').map((part, i) => (
+                        <span key={i}>
+                          {part}
+                          {i === 0 && <><br className="hidden md:block" /></>}
+                        </span>
+                      ))}
+                    </h2>
+
+                    {/* Description */}
+                    <motion.p
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.2 }}
+                      className="text-base md:text-lg text-slate-600 dark:text-white/50 leading-relaxed max-w-xl mb-12 font-medium transition-colors"
+                    >
+                      {activeCategory === 'phishing'
+                        ? 'Phishing is a form of cyberattack where threat actors craft deceptive emails impersonating trusted brands, colleagues, or institutions—to trick targets into clicking malicious links, revealing credentials, or downloading malware.'
+                        : SIMULATION_DATABASE[activeCategory]?.briefing}
+                    </motion.p>
+                    {/* Preview Card (centered, like the Vishing phone card) */}
+                    {activeCategory === 'phishing' && <PhishingPreviewCard />}
+
+                    {/* Flag indicators */}
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.6 }}
+                      className="flex flex-wrap gap-3 justify-center mt-10 mb-10"
+                    >
+                      {SIMULATION_DATABASE[activeCategory]?.flags.map((flag, i) => (
+                        <motion.div
+                          key={i}
+                          initial={{ opacity: 0, y: 8 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.7 + (i * 0.08) }}
+                          className="flex items-center gap-3 text-[11px] font-bold text-slate-700 dark:text-white/60 bg-white dark:bg-white/[0.03] border border-black/5 dark:border-white/[0.06] px-4 py-2.5 rounded-xl"
+                        >
+                          <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: flag.color === 'red-500' ? '#EF4444' : flag.color === 'amber-500' ? '#F59E0B' : flag.color === 'accent' ? '#2D5BFF' : '#22C55E', boxShadow: `0 0 8px ${flag.color === 'red-500' ? '#EF4444' : flag.color === 'amber-500' ? '#F59E0B' : flag.color === 'accent' ? '#2D5BFF' : '#22C55E'}` }} />
+                          <span className="uppercase tracking-widest">{flag.text}</span>
+                        </motion.div>
+                      ))}
+                    </motion.div>
+
+                    {/* CTA Button */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.9 }}
+                    >
+                      <button
+                        onClick={handleStart}
+                        className="group relative inline-flex items-center gap-4 px-12 py-6 bg-accent text-white text-sm font-black uppercase tracking-[0.2em] rounded-2xl overflow-hidden hover:shadow-[0_20px_40px_rgba(45,91,255,0.35)] transition-all hover:-translate-y-1 active:translate-y-0 active:scale-[0.98]"
+                      >
+                        <div className="absolute inset-0 bg-white/10 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
+                        <Play size={18} className="relative z-10" />
+                        <span className="relative z-10">Simulation</span>
+                      </button>
+                    </motion.div>
+                  </div>
+
+                  {/* Background shield decor */}
+                  <div className="absolute right-0 bottom-0 opacity-[0.03] dark:opacity-[0.04] pointer-events-none -mr-20 -mb-20">
+                    <Shield size={500} />
+                  </div>
+                </div>
+>>>>>>> Stashed changes
               )}
             </motion.div>
           </AnimatePresence>

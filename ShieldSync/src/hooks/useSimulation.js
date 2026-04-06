@@ -5,7 +5,8 @@ export function useSimulation() {
   const [inSandbox, setInSandbox] = useState(false);
   const [glitchTriggered, setGlitchTriggered] = useState(false);
   const [xRayMode, setXRayMode] = useState(false);
-  const [simulationStatus, setSimulationStatus] = useState('idle'); // idle | active | feedback_success | feedback_fail | completed
+  const [simulationStatus, setSimulationStatus] = useState('idle'); // idle | active | feedback_success | feedback_fail | feedback_false_alarm | completed
+  const [lastActionEmail, setLastActionEmail] = useState(null); // tracks the email that was just acted on for the review screen
   const [metrics, setMetrics] = useState({ startTime: null, hovers: 0, safeItemsOpened: 0 });
 
   // Game loop state
@@ -66,19 +67,28 @@ export function useSimulation() {
   }, []);
 
   // Called when user correctly reports a phishing email
-  const reportThreatSuccess = useCallback((emailId) => {
+  const reportThreatSuccess = useCallback((emailId, email) => {
+    setLastActionEmail(email || null);
     setSimulationStatus('feedback_success');
     setDetectedThreats(prev => [...prev, emailId]);
   }, []);
 
-  // Called when user falls for a trap (clicks malicious link or reports a safe email)
-  const reportThreatFail = useCallback(() => {
+  // Called when user falls for a trap (clicks malicious link)
+  const reportThreatFail = useCallback((email) => {
+    setLastActionEmail(email || null);
     setSimulationStatus('feedback_fail');
     setGlitchTriggered(true);
     setWrongClicks(prev => prev + 1);
     setTimeout(() => {
       setGlitchTriggered(false);
     }, 2000);
+  }, []);
+
+  // Called when user incorrectly reports a safe email as a threat (false alarm)
+  const reportFalsePositive = useCallback((email) => {
+    setLastActionEmail(email || null);
+    setSimulationStatus('feedback_false_alarm');
+    setWrongClicks(prev => prev + 1);
   }, []);
 
   // User dismisses the feedback popup — returns to sandbox
@@ -125,6 +135,7 @@ export function useSimulation() {
     setTotalThreats(0);
     setWrongClicks(0);
     setSessionInbox(null);
+    setLastActionEmail(null);
   }, []);
 
   return {
@@ -145,6 +156,8 @@ export function useSimulation() {
     sessionInbox,
     reportThreatSuccess,
     reportThreatFail,
+    reportFalsePositive,
+    lastActionEmail,
     dismissFeedback,
     checkCompletion,
     metrics,
