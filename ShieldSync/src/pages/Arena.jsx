@@ -4,6 +4,8 @@ import { Mail, Phone, MessageSquare, Terminal, Eye, Shield, Play, ArrowLeft, Ale
 import { useSimulation } from '../hooks/useSimulation';
 import Desktop from '../components/sandbox/Desktop';
 import VishingAnimation from '../components/common/VishingAnimation';
+import PhishingAnimation from '../components/common/PhishingAnimation';
+import SocialAnimation from '../components/common/SocialAnimation';
 import { useTheme } from '../contexts/ThemeContext';
 import { SIMULATION_DATABASE } from '../data/schema';
 
@@ -386,6 +388,14 @@ export default function Arena() {
                       SIMULATION_DATABASE[activeCategory].concept.videoUrl === 'component:VishingAnimation' ? (
                         <div className="w-full max-w-lg mb-12 shadow-[0_0_60px_rgba(255,0,60,0.1)] opacity-95 relative rounded-3xl overflow-hidden" style={{ aspectRatio: '16/9' }}>
                           <VishingAnimation />
+                        </div>
+                      ) : SIMULATION_DATABASE[activeCategory].concept.videoUrl === 'component:PhishingAnimation' ? (
+                        <div className="w-full max-w-lg mb-12 shadow-[0_0_60px_rgba(45,91,255,0.1)] opacity-95 relative rounded-3xl overflow-hidden" style={{ aspectRatio: '16/9' }}>
+                          <PhishingAnimation />
+                        </div>
+                      ) : SIMULATION_DATABASE[activeCategory].concept.videoUrl === 'component:SocialAnimation' ? (
+                        <div className="w-full max-w-lg mb-12 shadow-[0_0_60px_rgba(168,85,247,0.1)] opacity-95 relative rounded-3xl overflow-hidden" style={{ aspectRatio: '16/9' }}>
+                          <SocialAnimation />
                         </div>
                       ) : String(SIMULATION_DATABASE[activeCategory].concept.videoUrl).includes('youtube') ? (
                         <div className="w-full max-w-lg rounded-2xl border border-black/10 dark:border-white/10 mb-12 shadow-xl overflow-hidden opacity-80 relative" style={{ paddingTop: '56.25%' }}>

@@ -129,6 +129,11 @@ export const SIMULATION_DATABASE = {
   "soc-eng": {
     id: "soc-eng_01",
     category: "soc-eng",
+    concept: {
+      title: "SOCIAL ENG.",
+      description: "Social Engineering exploits human psychology rather than technical vulnerabilities—using trust, urgency, and impersonation via DMs, chats, or social platforms to trick targets into revealing credentials or clicking malicious links.",
+      videoUrl: "component:SocialAnimation"
+    },
     title: "OPERATION: TRUST EXPLOIT",
     briefing: "A direct message from a trusted contact requesting you click an external link. This simulates account hijacking and OSINT-driven pretexting attacks.",
     flags: [
