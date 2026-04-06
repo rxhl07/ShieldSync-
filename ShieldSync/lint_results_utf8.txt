@@ -1,0 +1,159 @@
+﻿
+> shieldsync@0.0.0 lint
+> eslint .
+
+
+C:\Users\rahul\OneDrive\Documents\projects\ShieldSync-\ShieldSync\src\components\common\Cursor.jsx
+  2:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\rahul\OneDrive\Documents\projects\ShieldSync-\ShieldSync\src\components\common\Navbar.jsx
+  6:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\rahul\OneDrive\Documents\projects\ShieldSync-\ShieldSync\src\components\common\PhishingAnimation.jsx
+  2:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\rahul\OneDrive\Documents\projects\ShieldSync-\ShieldSync\src\components\common\SocialAnimation.jsx
+  2:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\rahul\OneDrive\Documents\projects\ShieldSync-\ShieldSync\src\components\common\VishingAnimation.jsx
+  1:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\rahul\OneDrive\Documents\projects\ShieldSync-\ShieldSync\src\components\dashboard\CreditGauge.jsx
+   2:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u          no-unused-vars
+  14:9   error  'start' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\rahul\OneDrive\Documents\projects\ShieldSync-\ShieldSync\src\components\dashboard\DailyMission.jsx
+  1:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u           no-unused-vars
+  7:9   error  'isDark' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\rahul\OneDrive\Documents\projects\ShieldSync-\ShieldSync\src\components\dashboard\Leaderboard.jsx
+   1:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u           no-unused-vars
+  15:9   error  'isDark' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\rahul\OneDrive\Documents\projects\ShieldSync-\ShieldSync\src\components\dashboard\RadarChart.jsx
+  1:10  error  'useEffect' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\rahul\OneDrive\Documents\projects\ShieldSync-\ShieldSync\src\components\landing\Features.jsx
+  2:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\rahul\OneDrive\Documents\projects\ShieldSync-\ShieldSync\src\components\landing\HeroSection.jsx
+  2:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\rahul\OneDrive\Documents\projects\ShieldSync-\ShieldSync\src\components\landing\MiniGame.jsx
+  2:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\rahul\OneDrive\Documents\projects\ShieldSync-\ShieldSync\src\components\landing\StatsAndCTA.jsx
+  2:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\rahul\OneDrive\Documents\projects\ShieldSync-\ShieldSync\src\components\sandbox\Desktop.jsx
+    2:10   error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       no-unused-vars
+    2:35   error  'useAnimation' is defined but never used. Allowed unused vars must match /^[A-Z_]/u                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 no-unused-vars
+   78:92   error  'isXRay' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  no-unused-vars
+  311:45   error  Error: Cannot call impure function during render
+
+`Date.now` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+  309 | // ===================================================================
+  310 | function ScoringScreen({ detectedThreats, totalThreats, wrongClicks, metrics, onExit }) {
+> 311 |   const timeElapsed = metrics.startTime ? ((Date.now() - metrics.startTime) / 1000).toFixed(0) : 0;
+      |                                             ^^^^^^^^^^ Cannot call impure function
+  312 |   const minutes = Math.floor(timeElapsed / 60);
+  313 |   const seconds = timeElapsed % 60;
+  314 |  react-hooks/purity
+  434:241  error  'setSimulationStatus' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     no-unused-vars
+
+C:\Users\rahul\OneDrive\Documents\projects\ShieldSync-\ShieldSync\src\components\sandbox\HackerTerminal.jsx
+  3:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\rahul\OneDrive\Documents\projects\ShieldSync-\ShieldSync\src\components\sandbox\SocialModule.jsx
+   2:10  error    'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     no-unused-vars
+  16:7   error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+  14 |   useEffect(() => {
+  15 |     if (!hasSeen.has(selectedConvId)) {
+> 16 |       setIsTyping(true);
+     |       ^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  17 |       const timer = setTimeout(() => {
+  18 |         setIsTyping(false);
+  19 |         setHasSeen(prev => new Set([...prev, selectedConvId]));  react-hooks/set-state-in-effect
+  25:6   warning  React Hook useEffect has a missing dependency: 'hasSeen'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        react-hooks/exhaustive-deps
+
+C:\Users\rahul\OneDrive\Documents\projects\ShieldSync-\ShieldSync\src\components\sandbox\Taskbar.jsx
+  1:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u          no-unused-vars
+  7:11  error  'theme' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\rahul\OneDrive\Documents\projects\ShieldSync-\ShieldSync\src\components\sandbox\VishingModule.jsx
+   3:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      no-unused-vars
+   7:50  error  'onFail' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 no-unused-vars
+   7:58  error  'onSuccess' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              no-unused-vars
+  16:81  error  Error: Cannot call impure function during render
+
+`Date.now` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+  14 |   const [feedback, setFeedback] = useState(null);
+  15 |   const [showScorecard, setShowScorecard] = useState(false);
+> 16 |   const [stats, setStats] = useState({ threatsFound: 0, mistakes: 0, startTime: Date.now(), endTime: null });
+     |                                                                                 ^^^^^^^^^^ Cannot call impure function
+  17 |   const totalThreats = payload.calls.filter(c => c.isThreat).length;
+  18 |   
+  19 |   const currentCall = payload.calls[activeCallIndex];  react-hooks/purity
+
+C:\Users\rahul\OneDrive\Documents\projects\ShieldSync-\ShieldSync\src\components\sandbox\WindowWrapper.jsx
+  2:10   error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u           no-unused-vars
+  5:100  error  'onMaximize' is defined but never used                                                  no-unused-vars
+  9:9    error  'isDark' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\rahul\OneDrive\Documents\projects\ShieldSync-\ShieldSync\src\contexts\ThemeContext.jsx
+  37:14  error  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\rahul\OneDrive\Documents\projects\ShieldSync-\ShieldSync\src\hooks\useSimulation.js
+   1:33  error    'useRef' is defined but never used. Allowed unused vars must match /^[A-Z_]/u                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        no-unused-vars
+  24:39  error    Compilation Skipped: Existing memoization could not be preserved
+
+React Compiler has skipped optimizing this component because the existing manual memoization could not be preserved. The inferred dependencies did not match the manually specified dependencies, which could cause the value to change more or less frequently than expected. The inferred dependency was `attackConfig`, but the source dependencies were []. Inferred dependency not present in source.
+
+  22 |   const [sessionInbox, setSessionInbox] = useState(null);
+  23 |
+> 24 |   const startSimulation = useCallback((category, config = null) => {
+     |                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 25 |     let threatCount = 0;
+     | ^^^^^^^^^^^^^^^^^^^^^^^^
+> 26 |     let inbox = null;
+     ΓÇª
+     | ^^^^^^^^^^^^^^^^^^^^^^^^
+> 72 |     setMetrics({ startTime: Date.now(), hovers: 0, safeItemsOpened: 0 });
+     | ^^^^^^^^^^^^^^^^^^^^^^^^
+> 73 |   }, []);
+     | ^^^^ Could not preserve existing manual memoization
+  74 |
+  75 |   const trackHover = useCallback(() => {
+  76 |     setMetrics(m => ({ ...m, hovers: m.hovers + 1 }));  react-hooks/preserve-manual-memoization
+  73:6   warning  React Hook useCallback has a missing dependency: 'attackConfig'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    react-hooks/exhaustive-deps
+
+C:\Users\rahul\OneDrive\Documents\projects\ShieldSync-\ShieldSync\src\layouts\Layout.jsx
+   2:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u           no-unused-vars
+  19:9   error  'isDark' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\rahul\OneDrive\Documents\projects\ShieldSync-\ShieldSync\src\pages\Arena.jsx
+    2:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u                    no-unused-vars
+  148:11  error  'theme' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u            no-unused-vars
+  152:5   error  'glitchTriggered' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\rahul\OneDrive\Documents\projects\ShieldSync-\ShieldSync\src\pages\Arena.rakshan.jsx
+    2:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u                    no-unused-vars
+  144:11  error  'theme' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u            no-unused-vars
+  148:5   error  'glitchTriggered' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\rahul\OneDrive\Documents\projects\ShieldSync-\ShieldSync\src\pages\Dashboard.jsx
+   2:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u          no-unused-vars
+  12:11  error  'theme' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+  68:11  error  'theme' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+Γ£û 49 problems (47 errors, 2 warnings)
+

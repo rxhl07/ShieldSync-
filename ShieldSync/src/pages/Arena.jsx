@@ -6,6 +6,8 @@ import Desktop from '../components/sandbox/Desktop';
 import VishingAnimation from '../components/common/VishingAnimation';
 import PhishingAnimation from '../components/common/PhishingAnimation';
 import SocialAnimation from '../components/common/SocialAnimation';
+import ConfigForm from '../components/sandbox/ConfigForm';
+import HackerTerminal from '../components/sandbox/HackerTerminal';
 import { useTheme } from '../contexts/ThemeContext';
 import { SIMULATION_DATABASE } from '../data/schema';
 
@@ -150,6 +152,10 @@ export default function Arena() {
     glitchTriggered,
     xRayMode,
     simulationStatus,
+    attackConfig,
+    setAttackConfig,
+    hackerStatus,
+    setHackerStatus,
     startSimulation,
     failSimulation,
     succeedSimulation,
@@ -171,6 +177,12 @@ export default function Arena() {
 
   const handleStart = () => {
     startSimulation(activeCategory);
+  };
+
+  const handleLogsComplete = () => {
+    setSimulationStatus('active');
+    setHackerPOV(false);
+    startSimulation(activeCategory, attackConfig);
   };
 
   // =================== SANDBOX VIEW ===================
@@ -346,31 +358,21 @@ export default function Arena() {
               className="flex-1 flex flex-col relative z-10"
             >
               {hackerPOV ? (
-                <div className="p-12 flex-1 flex flex-col font-mono text-red-500">
-                  <div className="flex items-center gap-4 mb-10 opacity-60">
-                    <div className="w-10 h-10 rounded-xl bg-red-500/10 flex items-center justify-center">
-                      <Terminal size={20} />
-                    </div>
-                    <span className="text-xs font-bold tracking-[0.2em] uppercase">root@enclave:~# ./stage --vec={activeCategory}</span>
-                  </div>
-                  <div className="flex-1 border border-red-500/20 bg-red-500/5 p-8 rounded-2xl overflow-y-auto custom-scrollbar">
-                    <p className="mb-4 text-sm font-bold flex items-center gap-3">
-                      <span className="text-red-500/40">&gt;</span>
-                      <span>Exploiting trust mechanics in {activeCategory} vector...</span>
-                    </p>
-                    <p className="mb-4 text-sm font-bold flex items-center gap-3">
-                      <span className="text-red-500/40">&gt;</span>
-                      <span>Constructing malicious payload... done.</span>
-                    </p>
-                    <p className="mb-4 text-sm font-bold flex items-center gap-3">
-                      <span className="text-red-500/40">&gt;</span>
-                      <span>Targeting behavioral vulnerability 0xFA42...</span>
-                    </p>
-                    <div className="mt-12">
-                      <button className="px-10 py-5 bg-red-600 text-white hover:bg-white hover:text-red-600 transition-all duration-300 text-xs uppercase font-black tracking-[0.3em] rounded-xl shadow-[0_10px_30px_rgba(239,68,68,0.3)]">
-                        [ INITIALIZE ATTACK PACKET ]
-                      </button>
-                    </div>
+                <div className="p-12 flex-1 flex flex-col relative">
+                  <ConfigForm 
+                    vector={activeCategory} 
+                    config={attackConfig} 
+                    onChange={setAttackConfig}
+                    disabled={hackerStatus === 'initializing'}
+                  />
+                  <div className="flex-1 min-h-[300px]">
+                    <HackerTerminal 
+                      vector={activeCategory}
+                      config={attackConfig}
+                      status={hackerStatus}
+                      onInitialize={() => setHackerStatus('initializing')}
+                      onLogsComplete={handleLogsComplete}
+                    />
                   </div>
                 </div>
               ) : (SIMULATION_DATABASE[activeCategory]?.concept && !showOperationInfo) ? (

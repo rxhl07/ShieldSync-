@@ -77,51 +77,89 @@ export const SIMULATION_DATABASE = {
       calls: [
         {
           id: 1,
-          callerName: "Bank Fraud Dept",
-          callerNumber: "+1 (800) 555-0199",
+          callerName: "Alexander Hayes (CEO)",
+          callerNumber: "Verified Internal: +1 (212) 555-0198",
           isThreat: true,
+          voiceType: 'male',
           audioSequence: [
-            "Hello! This is Chase Fraud Support. We've detected a $400 charge in Ohio.",
-            "To freeze this transaction, I just sent a 6-digit cancellation code to your phone.",
-            "Can you read that code back to me for verification?"
+            "Hi, this is Alex. I'm boarding a flight in 5 minutes and I need you to bypass normal vendor procurement for a confidential acquisition.",
+            "The wire details are in your email. I need you to process the $45,000 transfer before my plane takes off.",
+            "Don't loop in finance yet, we're under an NDA. Just hit approve on the wire portal and confirm it with me now."
           ],
           redFlags: [
-            { text: 'read that code back to me', hint: 'Banks will never call you and ask for a 2FA or SMS code. Codes are for YOU to enter online only.' },
-            { text: 'Chase Fraud Support', hint: 'Caller ID is easily spoofed. Always hang up and call the number on the back of your card.' }
+            { text: 'confidential acquisition... under an NDA', hint: 'Threat actors use secrecy to prevent you from verifying the request with others.' },
+            { text: 'boarding a flight in 5 minutes', hint: 'Artificial urgency designed to force mistakes and bypass standard protocols.' },
+            { text: 'bypass normal vendor procurement', hint: 'Executives will not ask you to intentionally violate financial guidelines.' }
           ],
-          actionSafe: "Hang Up",
-          actionThreat: "Provide Code"
+          actionSafe: "Hang Up & Report",
+          actionThreat: "Provide Verbal Confirmation"
         },
         {
           id: 2,
-          callerName: "IT Operations",
-          callerNumber: "Internal Ext. 4022",
+          callerName: "Helpdesk Level 2",
+          callerNumber: "Internal Ext. 8812",
           isThreat: false,
+          voiceType: 'female',
           audioSequence: [
-            "Hey, this is Mark from internal IT.",
-            "We're doing a mandatory database migration today and services might be slow.",
-            "You don't need to do anything or give me any info, just please wait before submitting large queries. Thanks!"
+            "Hi, this is Sarah from IT Support. We noticed your workstation is missing the latest zero-day security patch.",
+            "I'm not going to ask for your password or send you any links. Just please leave your computer turned on and connected to the VPN tonight.",
+            "Our automated system will push the update at 2 AM. That's all, thank you and have a good evening!"
           ],
           redFlags: [],
           actionSafe: "Acknowledge & Hang Up",
-          actionThreat: "Offer Credentials"
+          actionThreat: "Offer Password"
         },
         {
           id: 3,
-          callerName: "Payroll Dept",
-          callerNumber: "+1 (888) 220-4100",
+          callerName: "AWS Cloud Operations",
+          callerNumber: "+1 (888) 314-2200",
           isThreat: true,
+          voiceType: 'female',
           audioSequence: [
-            "Hi, this is David from corporate payroll.",
-            "There is a matching discrepancy on your W-2 tax forms for this quarter.",
-            "To avoid a delay on this week's paycheck, please confirm your Social Security Number now."
+            "Hello, this is Jessica from AWS Enterprise Support. Your production database instance is currently undergoing a severe load spike.",
+            "We believe it's a DDoS attack. To mitigate it, we need to quickly verify your identity as the primary administrator.",
+            "I just triggered an MFA push notification to your authenticator app. Please tap 'Approve' so I can apply the traffic filter immediately."
           ],
           redFlags: [
-            { text: 'confirm your Social Security Number', hint: 'Payroll already has your SSN and will never ask to urgently confirm it over the phone.' },
-            { text: 'delay on this week\'s paycheck', hint: 'Artificial urgency targeting your financial security.' }
+            { text: 'AWS Enterprise Support', hint: 'Cloud providers do not monitor your individual instances to proactively call you about DDoS.' },
+            { text: "Please tap 'Approve'", hint: 'This is an MFA Fatigue attack. The attacker already has your password and needs you to approve the push.' }
           ],
           actionSafe: "Hang Up",
-          actionThreat: "Provide SSN"
+          actionThreat: "Approve MFA Push"
+        },
+        {
+          id: 4,
+          callerName: "HR Benefits Admin",
+          callerNumber: "Internal Ext. 9904",
+          isThreat: false,
+          voiceType: 'female',
+          audioSequence: [
+            "Hello, this is Rachel from Human Resources. I'm just calling to remind you that the open enrollment deadline is this Friday.",
+            "You can log into the Workday portal at your convenience to make your selections. No rush, but please don't forget.",
+            "Let me know if you have any questions. Have a great day."
+          ],
+          redFlags: [],
+          actionSafe: "Acknowledge & Hang Up",
+          actionThreat: "Over-share Info"
+        },
+        {
+          id: 5,
+          callerName: "Michael Chang (Engineering)",
+          callerNumber: "+1 (415) 555-0122",
+          isThreat: true,
+          voiceType: 'male',
+          audioSequence: [
+            "Hey, it's Mike. Sorry to call you on my personal number, I'm completely locked out of my corporate account.",
+            "I'm supposed to present to the client in ten minutes. Can you quickly read me the VPN bypass code the system just texted you?",
+            "I know the text says 'do not share', but I desperately need it to get back into the network for this presentation."
+          ],
+          redFlags: [
+            { text: 'locked out of my corporate account', hint: 'Common pretext to explain why someone is using an unknown or external number.' },
+            { text: 'read me the VPN bypass code', hint: 'The attacker is trying to log into an account, and the system is sending the 2FA code to you.' },
+            { text: "I know the text says 'do not share'", hint: 'Ignoring explicit security warnings is a massive red flag. Trust the system, not the voice.' }
+          ],
+          actionSafe: "Hang Up",
+          actionThreat: "Read 2FA Code"
         }
       ]
     }

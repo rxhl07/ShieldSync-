@@ -9,6 +9,10 @@ export function useSimulation() {
   const [simulationStatus, setSimulationStatus] = useState('idle'); // idle | active | feedback_success | feedback_fail | completed
   const [metrics, setMetrics] = useState({ startTime: null, hovers: 0, safeItemsOpened: 0 });
 
+  // Hacker Tab State
+  const [attackConfig, setAttackConfig] = useState({});
+  const [hackerStatus, setHackerStatus] = useState('idle'); // idle | initializing | active
+
   // Game loop state
   const [detectedThreats, setDetectedThreats] = useState([]);
   const [totalThreats, setTotalThreats] = useState(0);
@@ -17,16 +21,44 @@ export function useSimulation() {
   // Session inbox — generated once per simulation start
   const [sessionInbox, setSessionInbox] = useState(null);
 
-  const startSimulation = useCallback((category) => {
+  const startSimulation = useCallback((category, config = null) => {
     let threatCount = 0;
     let inbox = null;
+    let customConfig = config || attackConfig;
 
     if (category === 'phishing') {
       const session = generateSessionInbox(8);
-      threatCount = session.totalThreats;
       inbox = session.emails;
+      
+      if (customConfig?.template) {
+         const customThreat = {
+            id: 'custom_phish_1',
+            sender: `${customConfig.template} Security`,
+            subject: `Action Required: ${customConfig.template} Account Alert`,
+            read: false,
+            isThreat: true,
+            body: [
+              `Dear ${customConfig.template} Customer,`,
+              `We detected an unauthorized sign-in attempt on your ${customConfig.template} account.`,
+              `Please verify your identity immediately by clicking the secure ${customConfig.payloadType?.toLowerCase() || 'link'} below:`,
+              `http://verify-${customConfig.template.toLowerCase()}-security.com/auth`
+            ],
+            redFlags: [
+              { text: `verify-${customConfig.template.toLowerCase()}-security.com`, hint: 'Spoofed external domain.' }
+            ]
+         };
+         // Override the first threat in the generated inbox
+         const threatIndex = inbox.findIndex(e => e.isThreat);
+         if (threatIndex >= 0) inbox[threatIndex] = customThreat;
+         else inbox.unshift(customThreat);
+      }
+      
+      threatCount = inbox.filter(e => e.isThreat).length;
     } else if (category === 'soc-eng') {
       threatCount = SIMULATION_DATABASE['soc-eng'].payload.conversations.filter(c => c.isThreat).length;
+      // We could selectively override soc-eng conversations here too based on customConfig.targetPersona
+    } else if (category === 'vishing') {
+      threatCount = SIMULATION_DATABASE['vishing'].payload.calls.filter(c => c.isThreat).length;
     }
 
     setSessionInbox(inbox);
@@ -137,6 +169,10 @@ export function useSimulation() {
     glitchTriggered,
     xRayMode,
     simulationStatus,
+    attackConfig,
+    setAttackConfig,
+    hackerStatus,
+    setHackerStatus,
     startSimulation,
     failSimulation,
     succeedSimulation,

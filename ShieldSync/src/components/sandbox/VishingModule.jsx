@@ -34,8 +34,23 @@ export default function VishingModule({ payload, onFail, onSuccess, onExit, isXR
       window.speechSynthesis.cancel();
       const text = currentCall.audioSequence[audioIndex];
       const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = 0.95;
-      utterance.pitch = currentCall.isThreat ? 0.7 : 1.0; 
+      
+      const voices = window.speechSynthesis.getVoices();
+      const isFemale = currentCall.voiceType === 'female';
+      
+      const femaleVoices = voices.filter(v => v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('zira') || v.name.toLowerCase().includes('samantha') || v.name.toLowerCase().includes('victoria') || v.name.toLowerCase().includes('karen'));
+      const maleVoices = voices.filter(v => v.name.toLowerCase().includes('male') || v.name.toLowerCase().includes('david') || v.name.toLowerCase().includes('alex') || v.name.toLowerCase().includes('daniel'));
+
+      if (isFemale) {
+        if (femaleVoices.length > 0) utterance.voice = femaleVoices[0];
+        utterance.rate = 1.05;
+        utterance.pitch = currentCall.isThreat ? 1.4 : 1.2;
+      } else {
+        if (maleVoices.length > 0) utterance.voice = maleVoices[0];
+        utterance.rate = 0.95;
+        utterance.pitch = currentCall.isThreat ? 0.7 : 1.0; 
+      }
+      
       window.speechSynthesis.speak(utterance);
     }
   }, [audioIndex, callState, currentCall]);
