@@ -1,7 +1,7 @@
 import { Outlet, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../components/common/Navbar';
-import Footer from '../components/common/Footer';
+
 import CustomCursor from '../components/common/Cursor';
 import { ROUTES } from '../utils/constants';
 import { useTheme } from '../contexts/ThemeContext';
@@ -45,7 +45,7 @@ export default function Layout() {
         </motion.main>
       </AnimatePresence>
 
-      <Footer />
+
     </div>
   );
 }
