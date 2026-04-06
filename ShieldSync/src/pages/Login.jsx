@@ -13,12 +13,13 @@ const AUTH_STEPS = [
 ];
 
 export default function Login() {
-    const [isLogin, setIsLogin] = useState(true); // Toggle between Login and Register
+    const [isLogin, setIsLogin] = useState(true);
     const [authStatus, setAuthStatus] = useState('idle'); // 'idle' | 'authenticating' | 'granted' | 'error'
     const [stepIndex, setStepIndex] = useState(0);
     const [errorMsg, setErrorMsg] = useState('');
 
     // Form State
+    const [name, setName] = useState('');
     const [agentId, setAgentId] = useState('');
     const [passcode, setPasscode] = useState('');
 
@@ -33,18 +34,20 @@ export default function Login() {
         setErrorMsg('');
 
         try {
+            // Artificially wait 1.5 seconds so the cool animation can play
+            await new Promise(resolve => setTimeout(resolve, 1500));
+
             if (isLogin) {
                 await login(agentId, passcode);
             } else {
-                await register(agentId, passcode);
+                await register(name, agentId, passcode);
             }
-            // If successful, show granted terminal
+
             setAuthStatus('granted');
             setTimeout(() => {
                 navigate(from, { replace: true });
-            }, 1500);
+            }, 1000);
         } catch (err) {
-            // If error (wrong password, username taken), show alert
             setAuthStatus('error');
             setErrorMsg(err.message || 'Authentication failed');
             setTimeout(() => setAuthStatus('idle'), 3000);
@@ -104,6 +107,22 @@ export default function Login() {
                                 )}
 
                                 <form onSubmit={handleSubmit} className="space-y-4">
+                                    {!isLogin && (
+                                        <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="relative group">
+                                            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                                <Terminal size={16} className="text-slate-400 dark:text-white/30 group-focus-within:text-[#2D5BFF] transition-colors" />
+                                            </div>
+                                            <input
+                                                type="text"
+                                                required={!isLogin}
+                                                value={name}
+                                                onChange={(e) => setName(e.target.value)}
+                                                className="w-full bg-slate-50 dark:bg-black/50 border border-black/5 dark:border-white/10 rounded-xl py-4 pl-12 pr-4 text-slate-900 dark:text-white focus:outline-none focus:border-[#2D5BFF] font-mono text-sm"
+                                                placeholder="OPERATIVE NAME"
+                                            />
+                                        </motion.div>
+                                    )}
+
                                     <div className="relative group">
                                         <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                                             <Terminal size={16} className="text-slate-400 dark:text-white/30 group-focus-within:text-[#2D5BFF] transition-colors" />
@@ -132,12 +151,11 @@ export default function Login() {
                                         />
                                     </div>
 
-                                    <button type="submit" className="w-full mt-2 py-4 bg-[#2D5BFF] text-white text-xs font-bold tracking-[0.2em] uppercase rounded-xl hover:bg-[#1f4ae0] transition-all relative overflow-hidden group">
+                                    <button type="submit" className="w-full mt-2 py-4 bg-[#2D5BFF] text-white text-xs font-bold tracking-[0.2em] uppercase rounded-xl hover:bg-[#1f4ae0] transition-all relative overflow-hidden group shadow-[0_0_20px_rgba(45,91,255,0.3)] hover:shadow-[0_0_30px_rgba(45,91,255,0.5)]">
                                         <span className="relative z-10">{isLogin ? 'Authorize Access' : 'Create Credentials'}</span>
                                     </button>
                                 </form>
 
-                                {/* THIS IS THE MISSING TOGGLE BUTTON */}
                                 <div className="mt-6 text-center">
                                     <p className="text-xs text-slate-500 dark:text-white/50 font-mono">
                                         {isLogin ? "New to the platform? " : "Already an agent? "}

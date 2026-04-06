@@ -21,7 +21,7 @@ export default function ProfileWidget({ user, rankInfo }) {
                         <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#2D5BFF] to-[#7C3AED] p-[2px]">
                             <div className="w-full h-full rounded-[14px] bg-[#0A0A0B] flex items-center justify-center overflow-hidden">
                                 <img
-                                    src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.agentId || 'default'}`}
+                                    src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMkQ1QkZGIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNOSAxOS41SDRiLTEuMTA0NTcgMC0yLS44OTU0LTItMlY3Yy0xLjEwNDU3IDAtMiAuODk1NC0yIDJoMTljMS4xMDQ2IDAgMi0uODk1NCAyLTJWM2MtMS4xMDQ2IDAtMiAuODk1NC0yIDJoLTcuNU05IDcuNVYzaDEuNW0wIDEuNWgwTTkgNy41SDRiLTEuMTA0NTcgMC0yIC44OTU0LTIgMk03LjUgOXY4LjVNOSAxOS41aDZtLTEuNSAwVjdjMCAxLjEwNDYtLjg5NTQgMi0yIDJzLTItLjg5NTQtMi0yVjNoNm0wIDQuNWgtNS41TTkuNzU5LDRoNC40ODIiLz48Y2lyY2xlIGN4PSIxMy41IiBjeT0iMTIuNzUiIHI9IjEuNjUiIGZpbGw9IiMyRDVCVkYiLz48L3N2Zz4="
                                     alt="agent"
                                     className="w-14 h-14"
                                 />
