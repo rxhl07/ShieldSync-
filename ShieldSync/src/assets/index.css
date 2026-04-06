@@ -306,3 +306,9 @@
 .parallax-item {
   will-change: transform;
 }
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}

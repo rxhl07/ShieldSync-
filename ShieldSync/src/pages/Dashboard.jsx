@@ -7,6 +7,8 @@ import Leaderboard from '../components/dashboard/Leaderboard';
 import DailyMission from '../components/dashboard/DailyMission';
 import { USER_PROFILE } from '../utils/constants';
 import { useTheme } from '../contexts/ThemeContext';
+import { useEffect } from 'react';
+import MiniGame from '../components/landing/MiniGame';
 
 function ProfileWidget() {
   const { theme } = useTheme();
@@ -65,10 +67,39 @@ const itemVariants = {
 
 export default function Dashboard() {
   const [showForge, setShowForge] = useState(false);
+  const [showMiniGame, setShowMiniGame] = useState(false);
+  const [hasPlayedDaily, setHasPlayedDaily] = useState(false);
   const { theme } = useTheme();
+
+  useEffect(() => {
+    const today = new Date().toDateString();
+    if (localStorage.getItem('shieldsync_daily_mission') === today) {
+      setHasPlayedDaily(true);
+    }
+  }, []);
+
+  const handleGameComplete = () => {
+    setHasPlayedDaily(true);
+  };
 
   return (
     <div className="pt-28 pb-20 px-6 max-w-[1400px] mx-auto min-h-screen relative z-10">
+
+      {!hasPlayedDaily && (
+        <motion.div
+          initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}
+          className="mb-8 p-4 rounded-2xl bg-red-500/10 border border-red-500/20 flex flex-col sm:flex-row items-center justify-between gap-4"
+        >
+          <div className="flex items-center gap-3">
+            <Flame size={20} className="text-red-500 animate-pulse" />
+            <p className="text-sm font-bold text-slate-900 dark:text-white">New Daily Threat Detected.</p>
+            <p className="text-sm text-slate-600 dark:text-white/60">Would you like to analyze it now?</p>
+          </div>
+          <div className="flex items-center gap-3 w-full sm:w-auto">
+            <button onClick={() => setShowMiniGame(true)} className="flex-1 sm:flex-none px-6 py-2 bg-red-600 text-white text-xs font-bold uppercase tracking-widest rounded-lg hover:bg-red-700">Intercept Now</button>
+          </div>
+        </motion.div>
+      )}
 
       {/* Top Banner */}
       <motion.div
@@ -183,11 +214,19 @@ export default function Dashboard() {
         {/* Daily Mission */}
         <div className="md:col-span-12 lg:col-span-4">
           <motion.div variants={itemVariants} className="h-[420px]">
-            <DailyMission />
+            <DailyMission onPlay={() => setShowMiniGame(true)} hasPlayed={hasPlayedDaily} />
           </motion.div>
         </div>
 
       </div>
+
+
+      <MiniGame
+        isOpen={showMiniGame}
+        onClose={() => setShowMiniGame(false)}
+        onComplete={handleGameComplete}
+      />
+
     </div>
   );
 }
