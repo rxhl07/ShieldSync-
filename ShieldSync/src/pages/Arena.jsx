@@ -25,11 +25,27 @@ function PhishingPreviewCard() {
   const [scanned, setScanned] = useState(false);
 
   useEffect(() => {
-    const t1 = setTimeout(() => setActiveRow(0), 800);
-    const t2 = setTimeout(() => setActiveRow(1), 1400);
-    const t3 = setTimeout(() => setActiveRow(2), 2000);
-    const t4 = setTimeout(() => setScanned(true), 3000);
-    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); };
+    let active = true;
+    (async () => {
+      while (active) {
+        setActiveRow(-1);
+        setScanned(false);
+        await new Promise(r => setTimeout(r, 800));
+        if (!active) break;
+        setActiveRow(0);
+        await new Promise(r => setTimeout(r, 600));
+        if (!active) break;
+        setActiveRow(1);
+        await new Promise(r => setTimeout(r, 600));
+        if (!active) break;
+        setActiveRow(2);
+        await new Promise(r => setTimeout(r, 1000));
+        if (!active) break;
+        setScanned(true);
+        await new Promise(r => setTimeout(r, 3000));
+      }
+    })();
+    return () => { active = false; };
   }, []);
 
   const previewEmails = [
@@ -169,6 +185,8 @@ export default function Arena() {
     sessionInbox,
     reportThreatSuccess,
     reportThreatFail,
+    reportFalsePositive,
+    lastActionEmail,
     dismissFeedback,
     checkCompletion,
     metrics,
@@ -190,7 +208,7 @@ export default function Arena() {
     return (
       <div className="h-screen w-full relative z-[100] bg-black overflow-hidden flex flex-col font-mono">
         {/* Top return bar */}
-        <div className="h-14 bg-black border-b border-white/[0.06] flex items-center justify-between px-8 z-50">
+        <div className="h-14 bg-black border-b border-white/[0.06] flex items-center justify-between px-8 z-[200] relative">
           <button
             onClick={exitSimulation}
             className="flex items-center gap-3 text-white/30 hover:text-white text-[10px] font-black uppercase tracking-[0.2em] transition-all hover:gap-4"
@@ -236,7 +254,7 @@ export default function Arena() {
           </div>
         </div>
 
-        <div className="flex-1 relative">
+        <div className="flex-1 relative overflow-hidden">
           <Desktop
             status={simulationStatus}
             onFail={failSimulation}
@@ -253,6 +271,8 @@ export default function Arena() {
             sessionInbox={sessionInbox}
             onReportSuccess={reportThreatSuccess}
             onReportFail={reportThreatFail}
+            onReportFalsePositive={reportFalsePositive}
+            lastActionEmail={lastActionEmail}
             onDismissFeedback={dismissFeedback}
             onCheckCompletion={checkCompletion}
             metrics={metrics}
@@ -516,6 +536,7 @@ export default function Arena() {
                       <Shield size={500} />
                     </div>
                   </div>
+
               )}
                 </motion.div>
           </AnimatePresence>

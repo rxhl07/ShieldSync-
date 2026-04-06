@@ -13,12 +13,30 @@ export default function PhishingAnimation() {
   const [activeLine, setActiveLine] = useState(-1);
 
   useEffect(() => {
-    const t1 = setTimeout(() => setScanPhase('scanning'), 600);
-    const t2 = setTimeout(() => setActiveLine(0), 1000);
-    const t3 = setTimeout(() => setActiveLine(1), 1700);
-    const t4 = setTimeout(() => setActiveLine(2), 2400);
-    const t5 = setTimeout(() => setScanPhase('revealed'), 3200);
-    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); clearTimeout(t5); };
+    let active = true;
+    (async () => {
+      while (active) {
+        setScanPhase('idle');
+        setActiveLine(-1);
+        await new Promise(r => setTimeout(r, 600));
+        if (!active) break;
+        setScanPhase('scanning');
+        await new Promise(r => setTimeout(r, 400));
+        if (!active) break;
+        setActiveLine(0);
+        await new Promise(r => setTimeout(r, 700));
+        if (!active) break;
+        setActiveLine(1);
+        await new Promise(r => setTimeout(r, 700));
+        if (!active) break;
+        setActiveLine(2);
+        await new Promise(r => setTimeout(r, 800));
+        if (!active) break;
+        setScanPhase('revealed');
+        await new Promise(r => setTimeout(r, 3000));
+      }
+    })();
+    return () => { active = false; };
   }, []);
 
   return (
@@ -67,18 +85,16 @@ export default function PhishingAnimation() {
                 x: activeLine >= i ? 0 : -6,
               }}
               transition={{ duration: 0.35 }}
-              className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl mb-1 border transition-all duration-500 ${
-                scanPhase === 'revealed' && email.isThreat
+              className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl mb-1 border transition-all duration-500 ${scanPhase === 'revealed' && email.isThreat
                   ? 'bg-red-500/[0.07] border-red-500/25'
                   : scanPhase === 'revealed' && !email.isThreat
-                  ? 'bg-emerald-500/[0.04] border-emerald-500/10'
-                  : 'bg-white/[0.02] border-transparent'
-              }`}
+                    ? 'bg-emerald-500/[0.04] border-emerald-500/10'
+                    : 'bg-white/[0.02] border-transparent'
+                }`}
             >
               {/* Sender Avatar */}
-              <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 text-[10px] font-black transition-colors duration-500 ${
-                scanPhase === 'revealed' && email.isThreat ? 'bg-red-500/20 text-red-400' : 'bg-white/5 text-white/30'
-              }`}>
+              <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 text-[10px] font-black transition-colors duration-500 ${scanPhase === 'revealed' && email.isThreat ? 'bg-red-500/20 text-red-400' : 'bg-white/5 text-white/30'
+                }`}>
                 {email.sender[0]}
               </div>
 
@@ -86,9 +102,8 @@ export default function PhishingAnimation() {
                 <div className="flex items-center gap-1.5">
                   <span className="text-[10px] font-bold text-white/70 truncate">{email.sender}</span>
                 </div>
-                <div className={`text-[8px] truncate transition-colors duration-500 ${
-                  scanPhase === 'revealed' && email.isThreat ? 'text-red-400/80 font-bold' : 'text-white/25'
-                }`}>
+                <div className={`text-[8px] truncate transition-colors duration-500 ${scanPhase === 'revealed' && email.isThreat ? 'text-red-400/80 font-bold' : 'text-white/25'
+                  }`}>
                   {scanPhase === 'revealed' && email.isThreat ? email.senderEmail : email.subject}
                 </div>
               </div>

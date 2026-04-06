@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence, useAnimation } from 'framer-motion';
-import { Mail, Search, ArrowLeft, ShieldAlert, CheckCircle2, XCircle, X, Trophy, Target, Clock, AlertTriangle, Zap, Flame, Shield } from 'lucide-react';
-
+import { Mail, Search, ArrowLeft, ShieldAlert, CheckCircle2, XCircle, X, Trophy, Target, Clock, AlertTriangle, Zap, Flame, Shield, Info, Eye } from 'lucide-react';
 import VishingModule from './VishingModule';
 import SocialModule from './SocialModule';
 import Taskbar from './Taskbar';
@@ -73,11 +72,294 @@ function FloatingXP({ x, y }) {
 }
 
 // ===================================================================
+// RED FLAG HIGHLIGHT — Renders a highlighted text with tooltip
+// ===================================================================
+function RedFlagHighlight({ text, hint }) {
+  const [showHint, setShowHint] = useState(false);
+  return (
+    <span className="relative inline-block group">
+      <motion.span
+        initial={{ backgroundColor: 'rgba(239,68,68,0)' }}
+        animate={{ backgroundColor: 'rgba(239,68,68,0.15)' }}
+        transition={{ duration: 0.5 }}
+        className="border border-dashed border-red-500/50 rounded px-1.5 py-0.5 text-red-300 cursor-help"
+        onMouseEnter={() => setShowHint(true)}
+        onMouseLeave={() => setShowHint(false)}
+      >
+        {text}
+      </motion.span>
+      <AnimatePresence>
+        {showHint && (
+          <motion.div
+            initial={{ opacity: 0, y: 4, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 4, scale: 0.95 }}
+            className="absolute z-50 bottom-full left-0 mb-2 bg-red-950 border border-red-500/30 text-red-200 text-[11px] px-3 py-2 rounded-lg shadow-2xl max-w-xs leading-relaxed pointer-events-none"
+          >
+            <div className="flex items-start gap-2">
+              <AlertTriangle size={12} className="text-red-400 shrink-0 mt-0.5" />
+              <span>{hint}</span>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </span>
+  );
+}
+
+// ===================================================================
+// EMAIL REVIEW SCREEN — Shows red flags after user acts on an email
+// ===================================================================
+function EmailReviewScreen({ email, resultType, onContinue }) {
+  if (!email) return null;
+
+  const isSuccess = resultType === 'success';
+  const isFalseAlarm = resultType === 'false_alarm';
+  const isTrap = resultType === 'trap';
+
+  const borderColor = isSuccess ? 'border-emerald-500/20' : isFalseAlarm ? 'border-amber-500/20' : 'border-red-500/20';
+  const glowColor = isSuccess ? 'rgba(34,197,94,0.15)' : isFalseAlarm ? 'rgba(245,158,11,0.15)' : 'rgba(239,68,68,0.15)';
+  const iconBg = isSuccess ? 'bg-emerald-500/10 border-emerald-500/20' : isFalseAlarm ? 'bg-amber-500/10 border-amber-500/20' : 'bg-red-500/10 border-red-500/20';
+  const iconColor = isSuccess ? 'text-emerald-400' : isFalseAlarm ? 'text-amber-400' : 'text-red-400';
+  const titleColor = isSuccess ? 'text-emerald-400' : isFalseAlarm ? 'text-amber-400' : 'text-red-400';
+  const title = isSuccess ? 'Threat Identified!' : isFalseAlarm ? 'False Alarm!' : 'Compromised!';
+  const subtitle = isSuccess
+    ? 'Great work — you correctly identified a phishing email. Here\'s why it was malicious:'
+    : isFalseAlarm
+    ? 'That was a legitimate email. Reporting safe emails disrupts workflows. Here\'s why it was safe:'
+    : 'You fell for a trap! In a real scenario, your credentials could have been stolen. Here\'s what to look for:';
+
+  const Icon = isSuccess ? CheckCircle2 : isFalseAlarm ? Info : XCircle;
+
+  // Determine which highlights to render
+  const highlights = email.redFlags || [];
+  const hasSafeIndicators = !email.isThreat;
+
+  // For the body text, apply red-flag highlighting
+  const renderHighlightedBody = () => {
+    if (!email.body) return null;
+    return email.body.map((line, i) => {
+      if (line === '') return <div key={i} className="h-2" />;
+
+      // Check if any red flag matches this line
+      let highlighted = false;
+      for (const flag of highlights) {
+        if (line.includes(flag.text)) {
+          highlighted = true;
+          const parts = line.split(flag.text);
+          return (
+            <motion.p
+              key={i}
+              initial={{ opacity: 0, y: 5 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 + i * 0.03 }}
+              className="text-[14px] text-white/50 leading-relaxed"
+            >
+              {parts[0]}
+              <RedFlagHighlight text={flag.text} hint={flag.hint} />
+              {parts[1]}
+            </motion.p>
+          );
+        }
+      }
+
+      // Trap line rendering (the malicious button line)
+      const isTrapLine = email.isThreat && email.trapLine && line.includes(email.trapLine);
+      if (isTrapLine) {
+        const trapFlag = highlights.find(f => line.includes(f.text));
+        return (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2 + i * 0.03 }}
+            className="my-4"
+          >
+            <div className="px-6 py-3 bg-red-500/10 border border-dashed border-red-500/40 rounded-xl text-red-300 font-bold text-xs uppercase tracking-[0.15em] flex items-center gap-3">
+              <ShieldAlert size={14} className="text-red-400" />
+              {line.replace('→ ', '')}
+            </div>
+            {trapFlag && (
+              <div className="text-[11px] text-red-400/70 mt-2 ml-2 flex items-center gap-2">
+                <AlertTriangle size={10} /> {trapFlag.hint}
+              </div>
+            )}
+          </motion.div>
+        );
+      }
+
+      return (
+        <motion.p
+          key={i}
+          initial={{ opacity: 0, y: 5 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 + i * 0.03 }}
+          className="text-[14px] text-white/50 leading-relaxed"
+        >
+          {line}
+        </motion.p>
+      );
+    });
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.3 }}
+      className="absolute inset-0 z-[150] flex items-center justify-center bg-black/70 backdrop-blur-md"
+    >
+      <motion.div
+        initial={{ scale: 0.9, y: 20, opacity: 0 }}
+        animate={{ scale: 1, y: 0, opacity: 1 }}
+        exit={{ scale: 0.95, opacity: 0 }}
+        transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+        className={`relative bg-[#0a0a0f] ${borderColor} border rounded-2xl shadow-[0_0_80px_${glowColor}] w-full max-w-2xl max-h-[85vh] overflow-hidden flex flex-col`}
+      >
+        {/* Header */}
+        <div className="p-6 pb-4 border-b border-white/[0.06] shrink-0">
+          <div className="flex items-center gap-4 mb-3">
+            <motion.div
+              initial={{ scale: 0, rotate: -20 }}
+              animate={{ scale: 1, rotate: 0 }}
+              transition={{ type: 'spring', damping: 12, delay: 0.1 }}
+              className={`w-12 h-12 ${iconBg} border rounded-xl flex items-center justify-center`}
+            >
+              <Icon size={24} className={iconColor} />
+            </motion.div>
+            <div>
+              <h3 className={`text-xl font-black ${titleColor} tracking-tight`}>{title}</h3>
+              <p className="text-sm text-white/30 leading-relaxed mt-1 max-w-md">{subtitle}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Email Preview with Highlights */}
+        <div className="flex-1 overflow-y-auto custom-scrollbar p-6">
+          {/* Sender Header */}
+          <div className="flex items-center gap-4 mb-6 pb-4 border-b border-white/[0.05]">
+            <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white font-black text-sm ${email.isThreat ? 'bg-amber-600/80' : 'bg-accent/80'}`}>
+              {email.sender[0]}
+            </div>
+            <div className="flex-1">
+              <div className="flex items-center gap-3 flex-wrap">
+                <span className="font-bold text-white text-sm">{email.sender}</span>
+                <span className="text-[11px] text-white/20">&lt;{email.senderEmail}&gt;</span>
+                {email.isThreat && (
+                  <motion.span
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    className="px-2 py-0.5 bg-red-500/10 border border-red-500/30 rounded-md text-[9px] font-black text-red-400 uppercase tracking-widest flex items-center gap-1"
+                  >
+                    <ShieldAlert size={8} /> Unverified Domain
+                  </motion.span>
+                )}
+                {!email.isThreat && (
+                  <motion.span
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    className="px-2 py-0.5 bg-emerald-500/10 border border-emerald-500/30 rounded-md text-[9px] font-black text-emerald-400 uppercase tracking-widest flex items-center gap-1"
+                  >
+                    <CheckCircle2 size={8} /> Verified
+                  </motion.span>
+                )}
+              </div>
+              <div className="text-[11px] text-white/20 mt-1">
+                Subject: <span className="text-white/40">{email.subject}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Sender Domain Flag */}
+          {email.isThreat && highlights.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.15 }}
+              className="mb-6 p-3 bg-red-500/[0.06] border border-red-500/20 rounded-xl"
+            >
+              <div className="text-[10px] font-black text-red-400 uppercase tracking-widest mb-2 flex items-center gap-2">
+                <Eye size={12} /> Red Flags Detected
+              </div>
+              <div className="space-y-1.5">
+                {highlights.map((flag, i) => (
+                  <div key={i} className="flex items-start gap-2 text-[12px] text-red-300/70">
+                    <AlertTriangle size={10} className="text-red-400 shrink-0 mt-0.5" />
+                    <span><strong className="text-red-300">{flag.text}</strong> — {flag.hint}</span>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          )}
+
+          {/* Safe email explanation */}
+          {!email.isThreat && (
+            <motion.div
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.15 }}
+              className="mb-6 p-3 bg-emerald-500/[0.06] border border-emerald-500/20 rounded-xl"
+            >
+              <div className="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-2 flex items-center gap-2">
+                <CheckCircle2 size={12} /> Why This Email Is Safe
+              </div>
+              <div className="space-y-1.5 text-[12px] text-emerald-300/70">
+                <div className="flex items-start gap-2">
+                  <CheckCircle2 size={10} className="text-emerald-400 shrink-0 mt-0.5" />
+                  <span>Sender domain <strong className="text-emerald-300">{email.senderEmail}</strong> matches a known, trusted source</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <CheckCircle2 size={10} className="text-emerald-400 shrink-0 mt-0.5" />
+                  <span>No suspicious links, urgency tactics, or credential requests detected</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <CheckCircle2 size={10} className="text-emerald-400 shrink-0 mt-0.5" />
+                  <span>Tone and content are consistent with normal workplace communications</span>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {/* Body with highlights */}
+          <div className="space-y-3">
+            {renderHighlightedBody()}
+          </div>
+        </div>
+
+        {/* Footer with Continue */}
+        <div className="p-6 pt-4 border-t border-white/[0.06] shrink-0">
+          <motion.button
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.97 }}
+            onClick={onContinue}
+            className={`w-full py-3.5 font-black text-xs uppercase tracking-[0.15em] rounded-xl transition-all ${
+              isSuccess
+                ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20'
+                : isFalseAlarm
+                ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20 hover:bg-amber-500/20'
+                : 'bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20'
+            }`}
+          >
+            Continue Scanning
+          </motion.button>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+
+// ===================================================================
 // FULL-SCREEN SYNCMAIL CLIENT — Phishing Game Loop
 // ===================================================================
-function FullScreenSyncMail({ onReportSuccess, onReportFail, onClickTrap, detectedThreats, isXRay, trackHover, trackSafeItemOpen, sessionInbox, streak }) {
+function FullScreenSyncMail({ onReportSuccess, onReportFail, onReportFalsePositive, onClickTrap, detectedThreats, isXRay, trackHover, trackSafeItemOpen, sessionInbox, streak }) {
   const [selectedEmail, setSelectedEmail] = useState(null);
   const [shakeEmail, setShakeEmail] = useState(false);
+  const [readEmails, setReadEmails] = useState(new Set()); // tracks which emails have been opened
   const inbox = sessionInbox || [];
 
   const isDetected = (emailId) => detectedThreats.includes(emailId);
@@ -140,17 +422,16 @@ function FullScreenSyncMail({ onReportSuccess, onReportFail, onClickTrap, detect
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.04 }}
-                  whileHover={!detected ? { backgroundColor: 'rgba(255,255,255,0.04)', x: 4 } : {}}
-                  whileTap={!detected ? { scale: 0.995 } : {}}
+                  whileHover={{ backgroundColor: 'rgba(255,255,255,0.04)', x: 4 }}
+                  whileTap={{ scale: 0.995 }}
                   onClick={() => {
-                    if (!detected) {
-                      setSelectedEmail(email);
-                      if (!email.isThreat && trackSafeItemOpen) trackSafeItemOpen();
-                    }
+                    setSelectedEmail(email);
+                    setReadEmails(prev => new Set([...prev, email.id]));
+                    if (!email.isThreat && trackSafeItemOpen) trackSafeItemOpen();
                   }}
                   className={`flex items-center px-8 py-4 border-b border-white/[0.03] cursor-pointer transition-colors ${
                     detected
-                      ? 'opacity-30 pointer-events-none'
+                      ? 'opacity-50'
                       : ''
                   }`}
                 >
@@ -159,7 +440,7 @@ function FullScreenSyncMail({ onReportSuccess, onReportFail, onClickTrap, detect
                       <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', damping: 10 }}>
                         <CheckCircle2 size={14} className="text-emerald-500" />
                       </motion.div>
-                    ) : !email.read ? (
+                    ) : !readEmails.has(email.id) ? (
                       <div className="w-2 h-2 rounded-full bg-accent shadow-[0_0_8px_#2D5BFF]" />
                     ) : (
                       <div className="w-2 h-2 rounded-full bg-transparent" />
@@ -167,12 +448,12 @@ function FullScreenSyncMail({ onReportSuccess, onReportFail, onClickTrap, detect
                   </div>
 
                   <div className="w-52 truncate shrink-0">
-                    <span className={`text-sm tracking-tight ${!email.read && !detected ? 'font-black text-white' : 'font-medium text-white/40'}`}>
+                    <span className={`text-sm tracking-tight ${!readEmails.has(email.id) && !detected ? 'font-black text-white' : 'font-medium text-white/40'}`}>
                       {email.sender}
                     </span>
                   </div>
 
-                  <div className={`flex-1 truncate text-sm px-4 ${!email.read && !detected ? 'font-semibold text-white/70' : 'font-medium text-white/25'}`}>
+                  <div className={`flex-1 truncate text-sm px-4 ${!readEmails.has(email.id) && !detected ? 'font-semibold text-white/70' : 'font-medium text-white/25'}`}>
                     {email.subject}
                   </div>
 
@@ -205,9 +486,9 @@ function FullScreenSyncMail({ onReportSuccess, onReportFail, onClickTrap, detect
                 whileTap={{ scale: 0.97 }}
                 onClick={() => {
                   if (selectedEmail.isThreat) {
-                    onReportSuccess(selectedEmail.id);
+                    onReportSuccess(selectedEmail.id, selectedEmail);
                   } else {
-                    onReportFail();
+                    onReportFalsePositive(selectedEmail);
                     triggerShake();
                   }
                   setSelectedEmail(null);
@@ -271,7 +552,7 @@ function FullScreenSyncMail({ onReportSuccess, onReportFail, onClickTrap, detect
                           whileTap={{ scale: 0.98 }}
                           onMouseEnter={trackHover}
                           onClick={() => {
-                            onClickTrap();
+                            onClickTrap(selectedEmail);
                             setSelectedEmail(null);
                           }}
                           className="px-8 py-4 bg-accent text-white font-bold uppercase tracking-[0.15em] rounded-xl text-xs transition-all"
@@ -431,12 +712,14 @@ function ScoringScreen({ detectedThreats, totalThreats, wrongClicks, metrics, on
 // ===================================================================
 // DESKTOP COMPONENT — Main sandbox orchestrator
 // ===================================================================
-export default function Desktop({ status, onFail, onSuccess, isXRay, category, trackHover, trackSafeItemOpen, detectedThreats, totalThreats, wrongClicks, onReportSuccess, onReportFail, onDismissFeedback, onCheckCompletion, metrics, onExit, setSimulationStatus, sessionInbox: sessionInboxProp }) {
+export default function Desktop({ status, onFail, onSuccess, isXRay, category, trackHover, trackSafeItemOpen, detectedThreats, totalThreats, wrongClicks, onReportSuccess, onReportFail, onReportFalsePositive, lastActionEmail, onDismissFeedback, onCheckCompletion, metrics, onExit, setSimulationStatus, sessionInbox: sessionInboxProp }) {
   const simData = SIMULATION_DATABASE[category || 'phishing'];
   const [toasts, setToasts] = useState([]);
   const [xpFloats, setXpFloats] = useState([]);
   const [streak, setStreak] = useState(0);
   const [screenFlash, setScreenFlash] = useState(null); // 'success' | 'fail' | null
+  const [reviewEmail, setReviewEmail] = useState(null); // email being reviewed after action
+  const [reviewType, setReviewType] = useState(null); // 'success' | 'false_alarm' | 'trap'
 
   const addToast = useCallback((type, message) => {
     const id = Date.now();
@@ -458,29 +741,38 @@ export default function Desktop({ status, onFail, onSuccess, isXRay, category, t
   }, []);
 
   // Wrap report handlers to add feedback
-  const handleReportSuccess = useCallback((emailId) => {
-    if (onReportSuccess) onReportSuccess(emailId);
+  const handleReportSuccess = useCallback((emailId, email) => {
+    if (onReportSuccess) onReportSuccess(emailId, email);
     addToast('success', 'Threat Neutralized!');
     addXP();
     setStreak(prev => prev + 1);
     setScreenFlash('success');
     setTimeout(() => setScreenFlash(null), 400);
+    // Set review state
+    setReviewEmail(email);
+    setReviewType('success');
   }, [onReportSuccess, addToast, addXP]);
 
-  const handleReportFail = useCallback(() => {
-    if (onReportFail) onReportFail();
-    addToast('fail', 'Wrong Target — Stay Vigilant!');
+  const handleReportFalsePositive = useCallback((email) => {
+    if (onReportFalsePositive) onReportFalsePositive(email);
+    addToast('fail', 'False Alarm — That was a safe email!');
     setStreak(0);
     setScreenFlash('fail');
     setTimeout(() => setScreenFlash(null), 400);
-  }, [onReportFail, addToast]);
+    // Set review state
+    setReviewEmail(email);
+    setReviewType('false_alarm');
+  }, [onReportFalsePositive, addToast]);
 
-  const handleClickTrap = useCallback(() => {
-    if (onReportFail) onReportFail();
+  const handleClickTrap = useCallback((email) => {
+    if (onReportFail) onReportFail(email);
     addToast('fail', 'Compromised — Credentials Leaked!');
     setStreak(0);
     setScreenFlash('fail');
     setTimeout(() => setScreenFlash(null), 500);
+    // Set review state
+    setReviewEmail(email);
+    setReviewType('trap');
   }, [onReportFail, addToast]);
 
   const handleSafeLink = useCallback(() => {
@@ -488,6 +780,21 @@ export default function Desktop({ status, onFail, onSuccess, isXRay, category, t
     addXP();
   }, [addToast, addXP]);
 
+  // Handle continuing from the review screen
+  const handleReviewContinue = useCallback(() => {
+    setReviewEmail(null);
+    setReviewType(null);
+    if (onDismissFeedback) onDismissFeedback();
+
+    // Check completion after the user dismisses a success review
+    if (reviewType === 'success') {
+      setTimeout(() => {
+        if (onCheckCompletion) onCheckCompletion();
+      }, 100);
+    }
+  }, [onDismissFeedback, onCheckCompletion, reviewType]);
+
+  // Legacy dismiss handler for non-phishing modules
   const handleDismiss = useCallback(() => {
     if (onDismissFeedback) onDismissFeedback();
 
@@ -543,9 +850,21 @@ export default function Desktop({ status, onFail, onSuccess, isXRay, category, t
         ))}
       </AnimatePresence>
 
+      {/* ===== EMAIL REVIEW SCREEN (Phishing only) ===== */}
       <AnimatePresence>
-        {/* ===== SUCCESS FEEDBACK POPUP ===== */}
-        {status === 'feedback_success' && (
+        {category === 'phishing' && reviewEmail && (
+          <EmailReviewScreen
+            email={reviewEmail}
+            resultType={reviewType}
+            onContinue={handleReviewContinue}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* ===== NON-PHISHING FEEDBACK POPUPS ===== */}
+      <AnimatePresence>
+        {/* ===== SUCCESS FEEDBACK POPUP (non-phishing modules) ===== */}
+        {category !== 'phishing' && status === 'feedback_success' && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -580,7 +899,7 @@ export default function Desktop({ status, onFail, onSuccess, isXRay, category, t
 
               <h3 className="text-xl font-black text-emerald-400 mb-2 tracking-tight">Threat Detected</h3>
               <p className="text-sm text-white/30 mb-4 leading-relaxed">
-                Nice work! You correctly identified a phishing email.
+                Nice work! You correctly identified the threat.
               </p>
 
               {/* Progress bar */}
@@ -611,8 +930,8 @@ export default function Desktop({ status, onFail, onSuccess, isXRay, category, t
           </motion.div>
         )}
 
-        {/* ===== FAILURE FEEDBACK POPUP ===== */}
-        {status === 'feedback_fail' && (
+        {/* ===== FAILURE FEEDBACK POPUP (non-phishing modules) ===== */}
+        {category !== 'phishing' && status === 'feedback_fail' && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -679,7 +998,8 @@ export default function Desktop({ status, onFail, onSuccess, isXRay, category, t
         <div className="absolute inset-0 z-10">
           <FullScreenSyncMail
             onReportSuccess={handleReportSuccess}
-            onReportFail={handleReportFail}
+            onReportFail={handleClickTrap}
+            onReportFalsePositive={handleReportFalsePositive}
             onClickTrap={handleClickTrap}
             detectedThreats={detectedThreats || []}
             isXRay={isXRay}
@@ -705,7 +1025,7 @@ export default function Desktop({ status, onFail, onSuccess, isXRay, category, t
               payload={simData.payload} 
               onFail={handleClickTrap} 
               onReportSuccess={handleReportSuccess} 
-              onReportFail={handleReportFail} 
+              onReportFail={handleReportFalsePositive} 
               onSafeLink={handleSafeLink}
               detectedThreats={detectedThreats || []} 
               isXRay={isXRay} 

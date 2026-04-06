@@ -13,11 +13,23 @@ export default function SocialAnimation() {
   const [showWarning, setShowWarning] = useState(false);
 
   useEffect(() => {
-    const timers = MESSAGES.map((msg, i) =>
-      setTimeout(() => setVisibleCount(i + 1), msg.delay)
-    );
-    const warningTimer = setTimeout(() => setShowWarning(true), 3800);
-    return () => { timers.forEach(clearTimeout); clearTimeout(warningTimer); };
+    let active = true;
+    (async () => {
+      while (active) {
+        setVisibleCount(0);
+        setShowWarning(false);
+        for (let i = 0; i < MESSAGES.length; i++) {
+          await new Promise(r => setTimeout(r, i === 0 ? 800 : 1000));
+          if (!active) return;
+          setVisibleCount(i + 1);
+        }
+        await new Promise(r => setTimeout(r, 1000));
+        if (!active) return;
+        setShowWarning(true);
+        await new Promise(r => setTimeout(r, 3500));
+      }
+    })();
+    return () => { active = false; };
   }, []);
 
   return (
@@ -82,11 +94,10 @@ export default function SocialAnimation() {
                       boxShadow: ['0 0 0px rgba(239,68,68,0)', '0 0 16px rgba(239,68,68,0.5)', '0 0 0px rgba(239,68,68,0)']
                     } : {}}
                     transition={{ duration: 1.5, repeat: Infinity }}
-                    className={`px-3 py-1.5 rounded-xl rounded-bl-none text-[9px] leading-relaxed flex items-center gap-1.5 underline break-all transition-all duration-500 ${
-                      showWarning
+                    className={`px-3 py-1.5 rounded-xl rounded-bl-none text-[9px] leading-relaxed flex items-center gap-1.5 underline break-all transition-all duration-500 ${showWarning
                         ? 'bg-red-600/80 text-white border border-red-500/60'
                         : 'bg-blue-600/80 text-white'
-                    }`}
+                      }`}
                   >
                     <ExternalLink size={9} />
                     {msg.text}
