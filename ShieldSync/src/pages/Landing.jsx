@@ -7,9 +7,8 @@ export default function Landing() {
   return (
     <div className="relative w-full">
       <div className="cyber-grid-global" />
-
-      <MiniGame />
       <HeroSection />
+      <MiniGame />
       <Features />
       <StatsAndCTA />
     </div>

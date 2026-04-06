@@ -12,11 +12,10 @@ export default function ParticleNetwork() {
         let animationFrameId;
         let particlesArray = [];
 
-        // Mouse position tracker
         const mouse = {
             x: null,
             y: null,
-            radius: 150 // The detection radius of the cursor
+            radius: 150
         };
 
         const handleMouseMove = (event) => {
@@ -32,7 +31,6 @@ export default function ParticleNetwork() {
         window.addEventListener('mousemove', handleMouseMove);
         window.addEventListener('mouseout', handleMouseLeave);
 
-        // Dynamic resizing
         const resize = () => {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
@@ -60,26 +58,24 @@ export default function ParticleNetwork() {
             };
         };
 
-        // Initialize particle network
         function init() {
             particlesArray = [];
-            // Adjust density: dividing by a larger number means fewer particles
             let numberOfParticles = (canvas.height * canvas.width) / 12000;
 
             for (let i = 0; i < numberOfParticles; i++) {
                 let size = (Math.random() * 2) + 1;
                 let x = (Math.random() * ((canvas.width - size * 2) - (size * 2)) + size * 2);
                 let y = (Math.random() * ((canvas.height - size * 2) - (size * 2)) + size * 2);
-                // Speed
                 let directionX = (Math.random() * 1) - 0.5;
                 let directionY = (Math.random() * 1) - 0.5;
-                let color = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+
+                // HIGHLIGHT: Crisp white for dark mode, solid bold black for light mode
+                let color = isDark ? 'rgba(255, 255, 255, 0.15)' : 'rgba(15, 23, 42, 0.4)';
 
                 particlesArray.push(createParticle(x, y, directionX, directionY, size, color));
             }
         }
 
-        // Animation Loop
         function animate() {
             animationFrameId = requestAnimationFrame(animate);
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -90,7 +86,6 @@ export default function ParticleNetwork() {
             connect();
         }
 
-        // Draw lines between particles and mouse
         function connect() {
             let opacityValue = 1;
             for (let a = 0; a < particlesArray.length; a++) {
@@ -98,12 +93,14 @@ export default function ParticleNetwork() {
                     let distance = ((particlesArray[a].x - particlesArray[b].x) * (particlesArray[a].x - particlesArray[b].x))
                         + ((particlesArray[a].y - particlesArray[b].y) * (particlesArray[a].y - particlesArray[b].y));
 
-                    // 1. Base ambient connections (Blue/Grey)
                     if (distance < (canvas.width / 7) * (canvas.height / 7)) {
                         opacityValue = 1 - (distance / 20000);
+
+                        // HIGHLIGHT: Neon blue for dark mode, sharp dark slate/black for light mode
                         ctx.strokeStyle = isDark
-                            ? `rgba(45, 91, 255, ${opacityValue * 0.2})`
-                            : `rgba(0, 0, 0, ${opacityValue * 0.05})`;
+                            ? `rgba(45, 91, 255, ${opacityValue * 0.25})`
+                            : `rgba(15, 23, 42, ${opacityValue * 0.15})`;
+
                         ctx.lineWidth = 1;
                         ctx.beginPath();
                         ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
@@ -112,17 +109,18 @@ export default function ParticleNetwork() {
                     }
                 }
 
-                // 2. Interactive "Threat" connections to Mouse (Red)
                 if (mouse.x !== null) {
                     let mouseDistance = ((particlesArray[a].x - mouse.x) * (particlesArray[a].x - mouse.x))
                         + ((particlesArray[a].y - mouse.y) * (particlesArray[a].y - mouse.y));
 
                     if (mouseDistance < mouse.radius * mouse.radius) {
                         let mouseOpacity = 1 - Math.sqrt(mouseDistance) / mouse.radius;
-                        // The Glitch Red Threat Line
+
+                        // HIGHLIGHT: Glitch Red threat lines stay vibrant in both themes
                         ctx.strokeStyle = isDark
                             ? `rgba(239, 68, 68, ${mouseOpacity * 0.6})`
-                            : `rgba(239, 68, 68, ${mouseOpacity * 0.4})`;
+                            : `rgba(239, 68, 68, ${mouseOpacity * 0.5})`;
+
                         ctx.lineWidth = 1.5;
                         ctx.beginPath();
                         ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
@@ -136,14 +134,13 @@ export default function ParticleNetwork() {
         resize();
         animate();
 
-        // Cleanup to prevent memory leaks
         return () => {
             window.removeEventListener('resize', resize);
             window.removeEventListener('mousemove', handleMouseMove);
             window.removeEventListener('mouseout', handleMouseLeave);
             cancelAnimationFrame(animationFrameId);
         };
-    }, [isDark]);
+    }, [isDark]); // This dependency array ensures the canvas redraws instantly when the theme toggles
 
     return (
         <canvas

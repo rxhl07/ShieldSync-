@@ -3,9 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../components/common/Navbar';
 
 import CustomCursor from '../components/common/Cursor';
-import { ROUTES } from '../utils/constants';
+import ParticleNetwork from '../components/common/ParticleNetwork'; // 1. Imported the Network
 import { useTheme } from '../contexts/ThemeContext';
-import ParticleNetwork from '../components/common/ParticleNetwork';
 
 const pageVariants = {
   initial: { opacity: 0, y: 20 },
@@ -16,19 +15,18 @@ const pageVariants = {
 export default function Layout() {
   const location = useLocation();
   const { theme } = useTheme();
-  const isDark = theme === 'dark';
 
   return (
-    <div className="min-h-screen relative transition-colors duration-500 bg-[#F8F9FA] dark:bg-transparent">
-      <CustomCursor />
+    // 2. Changed bg-[#F8F9FA] to bg-transparent so the canvas shows through!
+    <div className="min-h-screen relative transition-colors duration-500 bg-transparent">
+
+      {/* 3. Dropped the network component right here at the back */}
       <ParticleNetwork />
-      <div className="cyber-grid" />
-      <div className="cyber-noise" />
 
-      {/* Dynamic Background Orbs */}
-      <div className="glow-orb-primary opacity-50 dark:opacity-100 transition-opacity duration-1000" />
-      <div className="glow-orb-secondary opacity-30 dark:opacity-100 transition-opacity duration-1000" />
+      {/* Keeping the subtle CSS grid overlay for extra texture */}
+      <div className="cyber-grid-global" />
 
+      <CustomCursor />
       <Navbar />
 
       <AnimatePresence mode="wait">
